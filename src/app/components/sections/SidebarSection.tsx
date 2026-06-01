@@ -274,7 +274,7 @@ export function SidebarSection() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 h-full w-full">
       <div>
         <h1 className="text-foreground mb-1">الشريط الجانبي</h1>
         <p className="text-muted-foreground">تصميم فاتح · شريط أيقونات + لوحة تنقل · RTL · قائمة المستخدم خلفه</p>
@@ -292,7 +292,7 @@ export function SidebarSection() {
           </button>
         </div>
 
-        <div dir="rtl" className="flex rounded-2xl overflow-hidden border border-border" style={{ height: "580px", boxShadow: "var(--shadow-card)" }}>
+        <div dir="rtl" className="flex rounded-2xl overflow-hidden border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
           <Sidebar
             collapsed={collapsed}
             dir="rtl"
@@ -312,7 +312,7 @@ export function SidebarSection() {
 
       <section>
         <h3 className="mb-4">الحالة المطوية — شريط الأيقونات فقط</h3>
-        <div dir="rtl" className="flex rounded-2xl overflow-hidden border border-border" style={{ height: "380px", boxShadow: "var(--shadow-card)" }}>
+        <div dir="rtl" className="flex rounded-2xl overflow-hidden border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
           <Sidebar
             collapsed
             dir="rtl"
