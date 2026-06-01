@@ -376,6 +376,8 @@ function SidebarDemo({ collapsed }: { collapsed: boolean }) {
             </div>
           </div>
         )}
+
+        {/* not collapsed */}
         {!collapsed && (
           <div
             className="flex flex-col h-full"
