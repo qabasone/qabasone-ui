@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Search, Check, X } from "lucide-react";
 
+type Direction = "rtl" | "ltr" | "auto";
+
 export interface DropdownOption {
   value: string;
   label: string;
@@ -25,6 +27,10 @@ export interface AccountOption {
 const inputBase =
   "w-full h-10 px-3 rounded-lg border border-border bg-input-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-sm";
 
+function getTextAlignClass(dir: Direction) {
+  return dir === "ltr" ? "text-left" : "text-right";
+}
+
 function useOutsideClick(ref: React.RefObject<HTMLElement>, handler: () => void) {
   useEffect(() => {
     function listener(e: MouseEvent) {
@@ -38,14 +44,20 @@ function useOutsideClick(ref: React.RefObject<HTMLElement>, handler: () => void)
 
 function DropdownPanel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="absolute top-full mt-1.5 w-full z-50 bg-card border border-border rounded-xl overflow-hidden"
-      style={{ boxShadow: "var(--shadow-popover)" }}>
+    <div
+      className="absolute top-full mt-1.5 w-full z-50 bg-card border border-border rounded-xl overflow-hidden"
+      style={{ boxShadow: "var(--shadow-popover)" }}
+    >
       {children}
     </div>
   );
 }
 
-function DropdownSearch({ value, onChange, placeholder = "بحث..." }: {
+function DropdownSearch({
+  value,
+  onChange,
+  placeholder = "Search...",
+}: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
@@ -66,24 +78,29 @@ function DropdownSearch({ value, onChange, placeholder = "بحث..." }: {
   );
 }
 
-function EmptyState() {
-  return <p className="text-sm text-muted-foreground text-center py-5">لا توجد نتائج</p>;
+function EmptyState({ text = "No results" }: { text?: string }) {
+  return <p className="text-sm text-muted-foreground text-center py-5">{text}</p>;
 }
 
-// ─────────────────────────────────────────
-// 1. SearchableDropdown — single select
-// ─────────────────────────────────────────
-export function SearchableDropdown({
-  options,
-  value,
-  onChange,
-  placeholder = "اختر...",
-}: {
+export interface SearchableDropdownProps {
   options: DropdownOption[];
   value?: string;
   onChange?: (v: string) => void;
   placeholder?: string;
-}) {
+  searchPlaceholder?: string;
+  emptyText?: string;
+  dir?: Direction;
+}
+
+export function SearchableDropdown({
+  options,
+  value,
+  onChange,
+  placeholder = "Select...",
+  searchPlaceholder = "Search...",
+  emptyText = "No results",
+  dir = "auto",
+}: SearchableDropdownProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const ref = useRef<HTMLDivElement>(null!);
@@ -95,13 +112,13 @@ export function SearchableDropdown({
   );
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative" dir={dir}>
       <button
         type="button"
         className={`${inputBase} flex items-center justify-between gap-2 cursor-pointer`}
         onClick={() => setOpen(!open)}
       >
-        <span className={selected ? "text-foreground" : "text-muted-foreground"}>
+        <span className={`${selected ? "text-foreground" : "text-muted-foreground"} ${getTextAlignClass(dir)} flex-1`}>
           {selected ? selected.label : placeholder}
         </span>
         <ChevronDown size={14} className={`text-muted-foreground shrink-0 transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
@@ -109,13 +126,13 @@ export function SearchableDropdown({
 
       {open && (
         <DropdownPanel>
-          <DropdownSearch value={search} onChange={setSearch} />
+          <DropdownSearch value={search} onChange={setSearch} placeholder={searchPlaceholder} />
           <div className="max-h-52 overflow-y-auto py-1 dropdown-scroll">
-            {filtered.length === 0 ? <EmptyState /> : filtered.map(o => (
+            {filtered.length === 0 ? <EmptyState text={emptyText} /> : filtered.map(o => (
               <button
                 key={o.value}
                 type="button"
-                className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors ${getTextAlignClass(dir)}`}
                 onClick={() => { onChange?.(o.value); setOpen(false); setSearch(""); }}
               >
                 <span>{o.label}</span>
@@ -129,20 +146,29 @@ export function SearchableDropdown({
   );
 }
 
-// ─────────────────────────────────────────
-// 2. MultiSelectDropdown
-// ─────────────────────────────────────────
-export function MultiSelectDropdown({
-  options,
-  value = [],
-  onChange,
-  placeholder = "اختر...",
-}: {
+export interface MultiSelectDropdownProps {
   options: DropdownOption[];
   value?: string[];
   onChange?: (v: string[]) => void;
   placeholder?: string;
-}) {
+  searchPlaceholder?: string;
+  emptyText?: string;
+  clearAllLabel?: string;
+  selectedCountText?: (count: number) => string;
+  dir?: Direction;
+}
+
+export function MultiSelectDropdown({
+  options,
+  value = [],
+  onChange,
+  placeholder = "Select...",
+  searchPlaceholder = "Search...",
+  emptyText = "No results",
+  clearAllLabel = "Clear all",
+  selectedCountText = (count) => `${count} selected`,
+  dir = "auto",
+}: MultiSelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const ref = useRef<HTMLDivElement>(null!);
@@ -162,13 +188,13 @@ export function MultiSelectDropdown({
   };
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative" dir={dir}>
       <div
         className={`min-h-10 px-3 py-1.5 rounded-lg border border-border bg-input-background flex flex-wrap items-center gap-1.5 cursor-pointer transition-all ${open ? "ring-2 ring-ring border-transparent" : ""}`}
         onClick={() => setOpen(!open)}
       >
         {value.length === 0 ? (
-          <span className="text-sm text-muted-foreground flex-1">{placeholder}</span>
+          <span className={`text-sm text-muted-foreground flex-1 ${getTextAlignClass(dir)}`}>{placeholder}</span>
         ) : (
           value.map(v => {
             const opt = options.find(o => o.value === v);
@@ -187,15 +213,15 @@ export function MultiSelectDropdown({
 
       {open && (
         <DropdownPanel>
-          <DropdownSearch value={search} onChange={setSearch} />
+          <DropdownSearch value={search} onChange={setSearch} placeholder={searchPlaceholder} />
           <div className="max-h-52 overflow-y-auto py-1 dropdown-scroll">
-            {filtered.length === 0 ? <EmptyState /> : filtered.map(o => {
+            {filtered.length === 0 ? <EmptyState text={emptyText} /> : filtered.map(o => {
               const checked = value.includes(o.value);
               return (
                 <button
                   key={o.value}
                   type="button"
-                  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                  className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors ${getTextAlignClass(dir)}`}
                   onClick={() => toggle(o.value)}
                 >
                   <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${checked ? "bg-primary border-primary" : "border-border bg-input-background"}`}>
@@ -208,9 +234,9 @@ export function MultiSelectDropdown({
           </div>
           {value.length > 0 && (
             <div className="border-t border-border px-3 py-2 flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">{value.length} محدد</span>
+              <span className="text-xs text-muted-foreground">{selectedCountText(value.length)}</span>
               <button type="button" className="text-xs text-destructive hover:underline" onClick={() => onChange?.([])}>
-                مسح الكل
+                {clearAllLabel}
               </button>
             </div>
           )}
@@ -220,30 +246,34 @@ export function MultiSelectDropdown({
   );
 }
 
-// ─────────────────────────────────────────
-// 3. UserDropdown — avatar + name, RTL
-// ─────────────────────────────────────────
 function UserAvatar({ initials, color, size = "md" }: { initials: string; color?: string; size?: "sm" | "md" }) {
   const sz = size === "sm" ? "w-6 h-6 text-xs" : "w-8 h-8 text-sm";
   return (
-    <div className={`${sz} rounded-full ${color ?? "bg-primary"} flex items-center justify-center text-white shrink-0`}
-      style={{ fontWeight: 600 }}>
+    <div className={`${sz} rounded-full ${color ?? "bg-primary"} flex items-center justify-center text-white shrink-0`} style={{ fontWeight: 600 }}>
       {initials}
     </div>
   );
+}
+
+export interface UserDropdownProps {
+  options: UserOption[];
+  value?: string;
+  onChange?: (v: string) => void;
+  placeholder?: string;
+  searchPlaceholder?: string;
+  emptyText?: string;
+  dir?: Direction;
 }
 
 export function UserDropdown({
   options,
   value,
   onChange,
-  placeholder = "اختر مستخدماً...",
-}: {
-  options: UserOption[];
-  value?: string;
-  onChange?: (v: string) => void;
-  placeholder?: string;
-}) {
+  placeholder = "Select user...",
+  searchPlaceholder = "Search users...",
+  emptyText = "No results",
+  dir = "auto",
+}: UserDropdownProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const ref = useRef<HTMLDivElement>(null!);
@@ -251,11 +281,12 @@ export function UserDropdown({
 
   const selected = options.find(o => o.value === value);
   const filtered = options.filter(o =>
-    o.name.includes(search) || o.role?.includes(search)
+    o.name.toLowerCase().includes(search.toLowerCase())
+    || o.role?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative" dir={dir}>
       <button
         type="button"
         className={`${inputBase} flex items-center gap-2.5 cursor-pointer`}
@@ -264,20 +295,20 @@ export function UserDropdown({
         {selected ? (
           <>
             <UserAvatar initials={selected.initials} color={selected.color} size="sm" />
-            <span className="flex-1 text-right text-foreground text-sm">{selected.name}</span>
+            <span className={`flex-1 ${getTextAlignClass(dir)} text-foreground text-sm`}>{selected.name}</span>
             {selected.role && <span className="text-xs text-muted-foreground">{selected.role}</span>}
           </>
         ) : (
-          <span className="flex-1 text-right text-muted-foreground">{placeholder}</span>
+          <span className={`flex-1 ${getTextAlignClass(dir)} text-muted-foreground`}>{placeholder}</span>
         )}
         <ChevronDown size={14} className={`text-muted-foreground shrink-0 transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
         <DropdownPanel>
-          <DropdownSearch value={search} onChange={setSearch} placeholder="ابحث عن مستخدم..." />
+          <DropdownSearch value={search} onChange={setSearch} placeholder={searchPlaceholder} />
           <div className="max-h-60 overflow-y-auto py-1 dropdown-scroll">
-            {filtered.length === 0 ? <EmptyState /> : filtered.map(o => (
+            {filtered.length === 0 ? <EmptyState text={emptyText} /> : filtered.map(o => (
               <button
                 key={o.value}
                 type="button"
@@ -285,7 +316,7 @@ export function UserDropdown({
                 onClick={() => { onChange?.(o.value); setOpen(false); setSearch(""); }}
               >
                 <UserAvatar initials={o.initials} color={o.color} />
-                <div className="flex-1 text-right min-w-0">
+                <div className={`flex-1 min-w-0 ${getTextAlignClass(dir)}`}>
                   <p className="text-sm text-foreground leading-tight">{o.name}</p>
                   {o.role && <p className="text-xs text-muted-foreground mt-0.5">{o.role}</p>}
                 </div>
@@ -299,27 +330,27 @@ export function UserDropdown({
   );
 }
 
-// ─────────────────────────────────────────
-// 4. AccountDropdown
-// ─────────────────────────────────────────
-const TYPE_ICONS: Record<string, string> = {
-  "بنك": "ب",
-  "خزنة": "خ",
-  "عهدة": "ع",
-  "محفظة": "م",
-};
+export interface AccountDropdownProps {
+  options: AccountOption[];
+  value?: string;
+  onChange?: (v: string) => void;
+  placeholder?: string;
+  searchPlaceholder?: string;
+  emptyText?: string;
+  typeIconMap?: Record<string, string>;
+  dir?: Direction;
+}
 
 export function AccountDropdown({
   options,
   value,
   onChange,
-  placeholder = "اختر حساباً...",
-}: {
-  options: AccountOption[];
-  value?: string;
-  onChange?: (v: string) => void;
-  placeholder?: string;
-}) {
+  placeholder = "Select account...",
+  searchPlaceholder = "Search account name or number...",
+  emptyText = "No results",
+  typeIconMap = {},
+  dir = "auto",
+}: AccountDropdownProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const ref = useRef<HTMLDivElement>(null!);
@@ -327,11 +358,15 @@ export function AccountDropdown({
 
   const selected = options.find(o => o.value === value);
   const filtered = options.filter(o =>
-    o.name.includes(search) || o.number.includes(search) || o.type.includes(search)
+    o.name.toLowerCase().includes(search.toLowerCase())
+    || o.number.toLowerCase().includes(search.toLowerCase())
+    || o.type.toLowerCase().includes(search.toLowerCase())
   );
 
+  const typeIcon = (type: string) => typeIconMap[type] ?? type.charAt(0).toUpperCase();
+
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative" dir={dir}>
       <button
         type="button"
         className={`${inputBase} flex items-center gap-2.5 cursor-pointer`}
@@ -341,23 +376,23 @@ export function AccountDropdown({
           <>
             <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
               <span className="text-primary text-xs" style={{ fontWeight: 700 }}>
-                {TYPE_ICONS[selected.type] ?? selected.type.charAt(0)}
+                {typeIcon(selected.type)}
               </span>
             </div>
-            <span className="flex-1 text-right text-foreground text-sm">{selected.name}</span>
+            <span className={`flex-1 ${getTextAlignClass(dir)} text-foreground text-sm`}>{selected.name}</span>
             <span className="text-xs text-muted-foreground font-mono">{selected.number}</span>
           </>
         ) : (
-          <span className="flex-1 text-right text-muted-foreground">{placeholder}</span>
+          <span className={`flex-1 ${getTextAlignClass(dir)} text-muted-foreground`}>{placeholder}</span>
         )}
         <ChevronDown size={14} className={`text-muted-foreground shrink-0 transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
         <DropdownPanel>
-          <DropdownSearch value={search} onChange={setSearch} placeholder="ابحث باسم الحساب أو الرقم..." />
+          <DropdownSearch value={search} onChange={setSearch} placeholder={searchPlaceholder} />
           <div className="max-h-60 overflow-y-auto py-1 dropdown-scroll">
-            {filtered.length === 0 ? <EmptyState /> : filtered.map(o => (
+            {filtered.length === 0 ? <EmptyState text={emptyText} /> : filtered.map(o => (
               <button
                 key={o.value}
                 type="button"
@@ -366,10 +401,10 @@ export function AccountDropdown({
               >
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <span className="text-primary text-sm" style={{ fontWeight: 700 }}>
-                    {TYPE_ICONS[o.type] ?? o.type.charAt(0)}
+                    {typeIcon(o.type)}
                   </span>
                 </div>
-                <div className="flex-1 text-right min-w-0">
+                <div className={`flex-1 min-w-0 ${getTextAlignClass(dir)}`}>
                   <p className="text-sm text-foreground leading-tight">{o.name}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     <span className="font-mono">{o.number}</span>

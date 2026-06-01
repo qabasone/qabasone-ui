@@ -5,6 +5,17 @@ import {
 } from "lucide-react";
 import { ConfirmModal, type ConfirmVariant } from "@/ui/components/ConfirmModal";
 
+const AR_CONFIRM_TEXTS = {
+  cancelLabel: "إلغاء",
+  confirmLabels: {
+    danger: "حذف",
+    warning: "تأكيد",
+    info: "حسناً",
+    success: "تأكيد",
+    neutral: "تأكيد",
+  },
+} as const;
+
 // ── Trigger button ────────────────────────────────────────────────────────────
 
 function TriggerBtn({
@@ -311,6 +322,8 @@ export function ConfirmModalSection() {
       {openCfg && (
         <ConfirmModal
           open={true}
+          dir="rtl"
+          texts={AR_CONFIRM_TEXTS}
           variant={openCfg.variant}
           icon={openCfg.icon}
           title={openCfg.title}

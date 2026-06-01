@@ -16,12 +16,48 @@ import {
   Archive,
   Send,
 } from "lucide-react";
-import { Pagination } from "@/ui/components/Pagination";
-import { ContextMenuTrigger } from "@/ui/components/ContextMenu";
-import type { ContextMenuGroup } from "@/ui/components/ContextMenu";
+import {
+  Pagination as BasePagination,
+  type PaginationLabels,
+  type PaginationProps,
+} from "@/ui/components/Pagination";
+import {
+  ContextMenuTrigger as BaseContextMenuTrigger,
+  type ContextMenuGroup,
+  type ContextMenuTriggerProps,
+} from "@/ui/components/ContextMenu";
 import { EntityLink } from "@/ui/components/EntityLink";
 
 // ── Sample data (30 rows so pagination is meaningful) ─────────────────────────
+
+const AR_PAGINATION_LABELS: PaginationLabels = {
+  rangePrefix: "عرض",
+  rangeFromOf: "من",
+  rowsUnit: "صفوف",
+  prevPageTitle: "الصفحة السابقة",
+  nextPageTitle: "الصفحة التالية",
+  firstPageTitle: "الصفحة الأولى",
+  lastPageTitle: "الصفحة الأخيرة",
+  prevShortTitle: "السابق",
+  nextShortTitle: "التالي",
+  firstShortTitle: "الأولى",
+  lastShortTitle: "الأخيرة",
+};
+
+function Pagination(props: PaginationProps) {
+  const { labels, dir, ...restProps } = props;
+  return (
+    <BasePagination
+      {...restProps}
+      dir={dir ?? "rtl"}
+      labels={{ ...AR_PAGINATION_LABELS, ...labels }}
+    />
+  );
+}
+
+function ContextMenuTrigger(props: ContextMenuTriggerProps) {
+  return <BaseContextMenuTrigger {...props} dir={props.dir ?? "rtl"} />;
+}
 
 const ALL_INVOICES = [
   {

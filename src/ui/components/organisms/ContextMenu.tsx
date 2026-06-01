@@ -1,41 +1,35 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+type Direction = "rtl" | "ltr" | "auto";
 
 export interface ContextMenuItem {
   id: string;
   label: string;
-  /** Lucide icon component */
   icon?: React.ElementType;
-  /** Keyboard shortcut hint shown on the trailing side */
   shortcut?: string;
-  /** "danger" → red, "featured" → bold, "default" → normal */
   variant?: "default" | "danger" | "featured";
   disabled?: boolean;
   onClick?: () => void;
 }
 
 export interface ContextMenuGroup {
-  /** Optional small group heading */
   label?: string;
   items: ContextMenuItem[];
 }
-
-// ── Menu panel (rendered in a portal) ─────────────────────────────────────────
 
 interface PanelProps {
   groups: ContextMenuGroup[];
   position: { x: number; y: number };
   onClose: () => void;
+  dir: Direction;
+  portalTarget?: HTMLElement | null;
 }
 
 const MARGIN = 10;
 
-function Panel({ groups, position, onClose }: PanelProps) {
+function Panel({ groups, position, onClose, dir, portalTarget }: PanelProps) {
   const ref = useRef<HTMLDivElement>(null);
-
-  // Start invisible so we can measure before revealing
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
 
   useEffect(() => {
@@ -44,12 +38,10 @@ function Panel({ groups, position, onClose }: PanelProps) {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    // Horizontal: open at cursor, flip left if clips right edge, then hard-clamp
     let left = position.x;
     if (left + width + MARGIN > vw) left = position.x - width;
     left = Math.max(MARGIN, Math.min(left, vw - width - MARGIN));
 
-    // Vertical: open below cursor, flip up if clips bottom edge, then hard-clamp
     let top = position.y;
     if (top + height + MARGIN > vh) top = position.y - height;
     top = Math.max(MARGIN, Math.min(top, vh - height - MARGIN));
@@ -57,14 +49,12 @@ function Panel({ groups, position, onClose }: PanelProps) {
     setCoords({ top, left });
   }, [position.x, position.y]);
 
-  // Close on outside click or Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     const onMouse = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
     };
     document.addEventListener("keydown", onKey);
-    // slight delay so the triggering click doesn't immediately close
     const t = setTimeout(() => document.addEventListener("mousedown", onMouse), 60);
     return () => {
       document.removeEventListener("keydown", onKey);
@@ -73,9 +63,12 @@ function Panel({ groups, position, onClose }: PanelProps) {
     };
   }, [onClose]);
 
+  const resolvedPortalTarget = portalTarget ?? (typeof document !== "undefined" ? document.body : null);
+  if (!resolvedPortalTarget) return null;
+
   return createPortal(
     <div
-      dir="rtl"
+      dir={dir}
       ref={ref}
       onClick={e => e.stopPropagation()}
       onContextMenu={e => { e.preventDefault(); e.stopPropagation(); }}
@@ -84,21 +77,16 @@ function Panel({ groups, position, onClose }: PanelProps) {
         zIndex: 9999,
         fontFamily: "var(--font-family)",
         boxShadow: "var(--shadow-modal)",
-        // Invisible until measured; avoids position flash
         visibility: coords ? "visible" : "hidden",
         top: coords?.top ?? position.y,
         left: coords?.left ?? position.x,
-        // Animate only after position is resolved
         animation: coords ? "ctx-in 0.15s cubic-bezier(0.16,1,0.3,1) both" : "none",
       }}
       className="bg-card rounded-2xl border border-border py-1.5 min-w-[200px] max-w-[280px] max-h-[70vh] overflow-y-auto overscroll-contain dropdown-scroll"
     >
       {groups.map((group, gi) => (
         <div key={gi}>
-          {/* Group divider */}
           {gi > 0 && <div className="my-1.5 border-t border-border" />}
-
-          {/* Group label */}
           {group.label && (
             <p
               className="px-3.5 pt-1.5 pb-0.5 text-xs text-muted-foreground"
@@ -107,19 +95,22 @@ function Panel({ groups, position, onClose }: PanelProps) {
               {group.label}
             </p>
           )}
-
-          {/* Items — wrapped in px-1.5 so hover bg doesn't touch menu edges */}
           <div className="px-1.5">
             {group.items.map(item => {
               const Icon = item.icon;
-              const isDanger   = item.variant === "danger";
+              const isDanger = item.variant === "danger";
               const isFeatured = item.variant === "featured";
 
               return (
                 <button
                   key={item.id}
                   disabled={item.disabled}
-                  onClick={() => { if (!item.disabled) { item.onClick?.(); onClose(); } }}
+                  onClick={() => {
+                    if (!item.disabled) {
+                      item.onClick?.();
+                      onClose();
+                    }
+                  }}
                   className="w-full flex items-center gap-2.5 px-2.5 py-1.5 text-sm transition-colors text-right disabled:opacity-35 disabled:cursor-not-allowed rounded-xl hover:bg-muted active:scale-[0.98]"
                   style={{
                     color: isDanger ? "var(--destructive)" : "var(--foreground)",
@@ -127,7 +118,6 @@ function Panel({ groups, position, onClose }: PanelProps) {
                     minHeight: "34px",
                   }}
                 >
-                  {/* Icon */}
                   {Icon && (
                     <Icon
                       size={15}
@@ -138,11 +128,7 @@ function Panel({ groups, position, onClose }: PanelProps) {
                       }}
                     />
                   )}
-
-                  {/* Label */}
                   <span className="flex-1 text-right leading-snug">{item.label}</span>
-
-                  {/* Shortcut badge */}
                   {item.shortcut && (
                     <kbd
                       className="shrink-0 rounded-md px-1.5 py-0.5 border border-border amount"
@@ -164,59 +150,50 @@ function Panel({ groups, position, onClose }: PanelProps) {
         </div>
       ))}
     </div>,
-    document.body
+    resolvedPortalTarget
   );
 }
 
-// ── Hook: programmatic control (for right-click on rows, custom triggers) ──────
+export interface UseContextMenuOptions {
+  dir?: Direction;
+  portalTarget?: HTMLElement | null;
+}
 
-/**
- * Low-level hook for full programmatic control.
- *
- * @example
- * const { isOpen, open, close, menuElement } = useContextMenu(groups);
- * <tr onContextMenu={e => { e.preventDefault(); open(e.clientX, e.clientY); }}>
- *   ...
- *   {menuElement}
- * </tr>
- */
-export function useContextMenu(groups: ContextMenuGroup[]) {
+export function useContextMenu(groups: ContextMenuGroup[], options: UseContextMenuOptions = {}) {
   const [state, setState] = useState<{ x: number; y: number } | null>(null);
-
   const open = useCallback((x: number, y: number) => setState({ x, y }), []);
   const close = useCallback(() => setState(null), []);
+  const dir = options.dir ?? "auto";
 
-  const menuElement = state
-    ? <Panel groups={groups} position={state} onClose={close} />
-    : null;
+  const menuElement = state ? (
+    <Panel
+      groups={groups}
+      position={state}
+      onClose={close}
+      dir={dir}
+      portalTarget={options.portalTarget}
+    />
+  ) : null;
 
   return { isOpen: !!state, open, close, menuElement };
 }
 
-// ── Wrapper component: wraps any trigger ───────────────────────────────────────
+export interface ContextMenuTriggerProps {
+  groups: ContextMenuGroup[];
+  children: React.ReactNode;
+  triggerOn?: "click" | "right-click" | "both";
+  dir?: Direction;
+  portalTarget?: HTMLElement | null;
+}
 
-/**
- * Wraps any element. Opens the menu at the exact cursor position on click.
- * Right-click is also supported.
- *
- * @example
- * <ContextMenuTrigger groups={groups}>
- *   <button>⋯</button>
- * </ContextMenuTrigger>
- */
 export function ContextMenuTrigger({
   groups,
   children,
   triggerOn = "click",
-}: {
-  groups: ContextMenuGroup[];
-  children: React.ReactNode;
-  /** "click" (default), "right-click", or "both" */
-  triggerOn?: "click" | "right-click" | "both";
-}) {
+  dir = "auto",
+  portalTarget,
+}: ContextMenuTriggerProps) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
-
-  // Use the actual mouse coordinates so menu always appears at cursor
   const openAt = useCallback((x: number, y: number) => setPos({ x, y }), []);
 
   return (
@@ -236,7 +213,15 @@ export function ContextMenuTrigger({
       >
         {children}
       </span>
-      {pos && <Panel groups={groups} position={pos} onClose={() => setPos(null)} />}
+      {pos && (
+        <Panel
+          groups={groups}
+          position={pos}
+          onClose={() => setPos(null)}
+          dir={dir}
+          portalTarget={portalTarget}
+        />
+      )}
     </>
   );
 }

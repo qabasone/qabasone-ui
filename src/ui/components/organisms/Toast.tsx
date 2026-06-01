@@ -2,11 +2,9 @@ import { createContext, useContext, useState, useCallback, useRef, useEffect } f
 import { createPortal } from "react-dom";
 import { X, Info, CheckCircle2, AlertTriangle, AlertCircle } from "lucide-react";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+type Direction = "rtl" | "ltr" | "auto";
 
 export type ToastVariant = "info" | "success" | "warning" | "error";
-
-/** Physical screen corner where the toast stack appears. */
 export type ToastPosition = "top-right" | "top-left" | "bottom-right" | "bottom-left";
 
 export interface ToastAction {
@@ -15,27 +13,13 @@ export interface ToastAction {
 }
 
 export interface ToastOptions {
-  /** Visual style. Default: "info" */
   variant?: ToastVariant;
-  /** Bold heading shown in all layouts. */
   title: string;
-  /**
-   * Optional description. When provided the toast renders in the
-   * expanded (multi-line) layout; otherwise compact (single-line).
-   */
   description?: string;
-  /** Primary CTA button. */
   action?: ToastAction;
-  /** Secondary text-link action. */
   secondaryAction?: ToastAction;
-  /** Show the × dismiss button. Default: true */
   closable?: boolean;
-  /**
-   * Auto-dismiss after N ms. Pass 0 to keep the toast until the user
-   * explicitly closes it. Default: 4000
-   */
   duration?: number;
-  /** Corner of the screen. Default: "bottom-right" */
   position?: ToastPosition;
 }
 
@@ -48,14 +32,9 @@ interface ToastData extends Required<Pick<ToastOptions, "variant" | "position" |
   duration: number;
 }
 
-// ── Context / hook ─────────────────────────────────────────────────────────────
-
 interface ToastContextValue {
-  /** Show a toast. Returns the generated id so you can dismiss it manually. */
   toast: (options: ToastOptions) => string;
-  /** Dismiss a specific toast by id. */
   dismiss: (id: string) => void;
-  /** Dismiss every visible toast. */
   dismissAll: () => void;
 }
 
@@ -66,8 +45,6 @@ export function useToast() {
   if (!ctx) throw new Error("useToast must be used inside <ToastProvider>");
   return ctx;
 }
-
-// ── Variant tokens ─────────────────────────────────────────────────────────────
 
 const VARIANTS: Record<ToastVariant, {
   Icon: React.ElementType;
@@ -101,25 +78,26 @@ const VARIANTS: Record<ToastVariant, {
   },
 };
 
-// ── Position helpers ───────────────────────────────────────────────────────────
-
 const POS_STYLE: Record<ToastPosition, React.CSSProperties> = {
-  "top-right":    { top: 16, right: 16 },
-  "top-left":     { top: 16, left: 16 },
+  "top-right": { top: 16, right: 16 },
+  "top-left": { top: 16, left: 16 },
   "bottom-right": { bottom: 16, right: 16 },
-  "bottom-left":  { bottom: 16, left: 16 },
+  "bottom-left": { bottom: 16, left: 16 },
 };
-
-// ── Single toast item (also exported for static previews) ─────────────────────
 
 export interface ToastItemProps {
   data: Pick<ToastData, "variant" | "title" | "description" | "action" | "secondaryAction" | "closable">;
   onDismiss?: () => void;
-  /** When true the item plays its entrance animation. Default true. */
   animate?: boolean;
+  closeAriaLabel?: string;
 }
 
-export function ToastItem({ data, onDismiss, animate = true }: ToastItemProps) {
+export function ToastItem({
+  data,
+  onDismiss,
+  animate = true,
+  closeAriaLabel = "Close",
+}: ToastItemProps) {
   const { Icon, iconColor, iconBg, actionBg } = VARIANTS[data.variant];
   const expanded = !!data.description;
 
@@ -134,7 +112,6 @@ export function ToastItem({ data, onDismiss, animate = true }: ToastItemProps) {
         animation: animate ? "toast-slide-in 0.22s cubic-bezier(0.16,1,0.3,1) both" : undefined,
       }}
     >
-      {/* Icon */}
       <div
         className="rounded-xl flex items-center justify-center shrink-0"
         style={{
@@ -148,10 +125,8 @@ export function ToastItem({ data, onDismiss, animate = true }: ToastItemProps) {
         <Icon size={expanded ? 16 : 14} style={{ color: iconColor }} />
       </div>
 
-      {/* Body */}
       <div className="flex-1 min-w-0">
         {expanded ? (
-          /* Expanded layout */
           <>
             <p className="text-sm text-foreground leading-snug" style={{ fontWeight: 600 }}>
               {data.title}
@@ -183,7 +158,6 @@ export function ToastItem({ data, onDismiss, animate = true }: ToastItemProps) {
             )}
           </>
         ) : (
-          /* Compact layout */
           <div className="flex items-center gap-3 flex-wrap">
             <span className="text-sm text-foreground" style={{ fontWeight: 600 }}>
               {data.title}
@@ -214,12 +188,11 @@ export function ToastItem({ data, onDismiss, animate = true }: ToastItemProps) {
         )}
       </div>
 
-      {/* Close */}
       {data.closable && (
         <button
           onClick={onDismiss}
           className="shrink-0 w-6 h-6 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors self-start"
-          aria-label="إغلاق"
+          aria-label={closeAriaLabel}
         >
           <X size={12} />
         </button>
@@ -228,16 +201,16 @@ export function ToastItem({ data, onDismiss, animate = true }: ToastItemProps) {
   );
 }
 
-// ── Stack for a single position ───────────────────────────────────────────────
-
 function ToastStack({
   toasts,
   position,
   onDismiss,
+  closeAriaLabel,
 }: {
   toasts: ToastData[];
   position: ToastPosition;
   onDismiss: (id: string) => void;
+  closeAriaLabel: string;
 }) {
   if (!toasts.length) return null;
   const isBottom = position.startsWith("bottom");
@@ -252,30 +225,45 @@ function ToastStack({
     >
       {toasts.map((t) => (
         <div key={t.id} className="pointer-events-auto">
-          <ToastItem data={t} onDismiss={() => onDismiss(t.id)} />
+          <ToastItem
+            data={t}
+            onDismiss={() => onDismiss(t.id)}
+            closeAriaLabel={closeAriaLabel}
+          />
         </div>
       ))}
     </div>
   );
 }
 
-// ── Provider ──────────────────────────────────────────────────────────────────
-
-/** Maximum number of toasts visible on screen at the same time (globally). */
 const MAX_VISIBLE_TOASTS = 3;
-
 const ALL_POSITIONS: ToastPosition[] = [
   "top-right", "top-left", "bottom-right", "bottom-left",
 ];
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
+export interface ToastProviderProps {
+  children: React.ReactNode;
+  dir?: Direction;
+  closeAriaLabel?: string;
+  portalTarget?: HTMLElement | null;
+}
+
+export function ToastProvider({
+  children,
+  dir = "auto",
+  closeAriaLabel = "Close",
+  portalTarget,
+}: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
 
   const dismiss = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
     const timer = timers.current.get(id);
-    if (timer) { clearTimeout(timer); timers.current.delete(id); }
+    if (timer) {
+      clearTimeout(timer);
+      timers.current.delete(id);
+    }
   }, []);
 
   const dismissAll = useCallback(() => {
@@ -300,11 +288,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     };
     setToasts((prev) => {
       const next = [...prev, data];
-      // Evict oldest toasts beyond the global cap
       while (next.length > MAX_VISIBLE_TOASTS) {
         const evicted = next.shift()!;
         const t = timers.current.get(evicted.id);
-        if (t) { clearTimeout(t); timers.current.delete(evicted.id); }
+        if (t) {
+          clearTimeout(t);
+          timers.current.delete(evicted.id);
+        }
       }
       return next;
     });
@@ -314,24 +304,26 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     return id;
   }, [dismiss]);
 
-  // Cleanup on unmount
   useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
+
+  const resolvedPortalTarget = portalTarget ?? (typeof document !== "undefined" ? document.body : null);
 
   return (
     <ToastCtx.Provider value={{ toast, dismiss, dismissAll }}>
       {children}
-      {createPortal(
-        <div dir="rtl">
+      {resolvedPortalTarget && createPortal(
+        <div dir={dir}>
           {ALL_POSITIONS.map((pos) => (
             <ToastStack
               key={pos}
               position={pos}
               toasts={toasts.filter((t) => t.position === pos)}
               onDismiss={dismiss}
+              closeAriaLabel={closeAriaLabel}
             />
           ))}
         </div>,
-        document.body
+        resolvedPortalTarget
       )}
     </ToastCtx.Provider>
   );

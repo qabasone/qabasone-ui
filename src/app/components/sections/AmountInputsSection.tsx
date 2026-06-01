@@ -11,8 +11,8 @@ import {
 
 const CURRENCIES = [
   { code: "SAR", symbol: "ر.س", name: "ريال سعودي" },
-  { code: "USD", symbol: "$",   name: "دولار أمريكي" },
-  { code: "EUR", symbol: "€",   name: "يورو" },
+  { code: "USD", symbol: "$", name: "دولار أمريكي" },
+  { code: "EUR", symbol: "€", name: "يورو" },
   { code: "EGP", symbol: "ج.م", name: "جنيه مصري" },
   { code: "AED", symbol: "د.إ", name: "درهم إماراتي" },
   { code: "KWD", symbol: "د.ك", name: "دينار كويتي" },
@@ -24,40 +24,40 @@ const UNIT_GROUPS = [
   {
     label: "عدد",
     units: [
-      { id: "pcs",    abbr: "قطعة",   label: "قطعة",      factor: 1 },
-      { id: "dozen",  abbr: "دزينة",  label: "دزينة",     factor: 12 },
-      { id: "box",    abbr: "علبة",   label: "علبة",      factor: 1 },
-      { id: "carton", abbr: "كرتون",  label: "كرتون",     factor: 1 },
-      { id: "crate",  abbr: "صندوق",  label: "صندوق",     factor: 1 },
-      { id: "sack",   abbr: "كيس",    label: "كيس",       factor: 1 },
-      { id: "pallet", abbr: "باليت",  label: "باليت",     factor: 1 },
+      { id: "pcs", abbr: "قطعة", label: "قطعة", factor: 1 },
+      { id: "dozen", abbr: "دزينة", label: "دزينة", factor: 12 },
+      { id: "box", abbr: "علبة", label: "علبة", factor: 1 },
+      { id: "carton", abbr: "كرتون", label: "كرتون", factor: 1 },
+      { id: "crate", abbr: "صندوق", label: "صندوق", factor: 1 },
+      { id: "sack", abbr: "كيس", label: "كيس", factor: 1 },
+      { id: "pallet", abbr: "باليت", label: "باليت", factor: 1 },
     ],
   },
   {
     label: "وزن",
     units: [
-      { id: "g",   abbr: "غ",      label: "غرام",      factor: 0.001 },
-      { id: "kg",  abbr: "كغ",     label: "كيلوغرام",  factor: 1 },
-      { id: "ton", abbr: "طن",     label: "طن",        factor: 1000 },
-      { id: "lb",  abbr: "رطل",    label: "رطل",       factor: 0.453592 },
-      { id: "q",   abbr: "قنطار",  label: "قنطار",     factor: 100 },
+      { id: "g", abbr: "غ", label: "غرام", factor: 0.001 },
+      { id: "kg", abbr: "كغ", label: "كيلوغرام", factor: 1 },
+      { id: "ton", abbr: "طن", label: "طن", factor: 1000 },
+      { id: "lb", abbr: "رطل", label: "رطل", factor: 0.453592 },
+      { id: "q", abbr: "قنطار", label: "قنطار", factor: 100 },
     ],
   },
   {
     label: "حجم",
     units: [
-      { id: "ml",  abbr: "مل",     label: "مليلتر",    factor: 0.001 },
-      { id: "l",   abbr: "لتر",    label: "لتر",       factor: 1 },
-      { id: "m3",  abbr: "م³",     label: "متر مكعب",  factor: 1000 },
-      { id: "gal", abbr: "غالون",  label: "غالون",     factor: 3.785 },
+      { id: "ml", abbr: "مل", label: "مليلتر", factor: 0.001 },
+      { id: "l", abbr: "لتر", label: "لتر", factor: 1 },
+      { id: "m3", abbr: "م³", label: "متر مكعب", factor: 1000 },
+      { id: "gal", abbr: "غالون", label: "غالون", factor: 3.785 },
     ],
   },
   {
     label: "طول",
     units: [
-      { id: "mm",  abbr: "مم",     label: "ميليمتر",   factor: 0.001 },
-      { id: "cm",  abbr: "سم",     label: "سنتيمتر",   factor: 0.01 },
-      { id: "m",   abbr: "م",      label: "متر",       factor: 1 },
+      { id: "mm", abbr: "مم", label: "ميليمتر", factor: 0.001 },
+      { id: "cm", abbr: "سم", label: "سنتيمتر", factor: 0.01 },
+      { id: "m", abbr: "م", label: "متر", factor: 1 },
     ],
   },
 ];
@@ -142,7 +142,7 @@ function UnitDropdown({
   useEffect(() => {
     const fn = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node) &&
-          triggerRef.current && !triggerRef.current.contains(e.target as Node)) onClose();
+        triggerRef.current && !triggerRef.current.contains(e.target as Node)) onClose();
     };
     const t = setTimeout(() => document.addEventListener("mousedown", fn), 60);
     return () => { clearTimeout(t); document.removeEventListener("mousedown", fn); };
@@ -238,7 +238,7 @@ function CurrencyDropdown({
   useEffect(() => {
     const fn = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node) &&
-          triggerRef.current && !triggerRef.current.contains(e.target as Node)) onClose();
+        triggerRef.current && !triggerRef.current.contains(e.target as Node)) onClose();
     };
     const t = setTimeout(() => document.addEventListener("mousedown", fn), 60);
     return () => { clearTimeout(t); document.removeEventListener("mousedown", fn); };
@@ -362,8 +362,8 @@ export function MoneyInput({
   const borderColor = error
     ? "var(--destructive)"
     : focused
-    ? "var(--ring)"
-    : "var(--border-strong)";
+      ? "var(--ring)"
+      : "var(--border-strong)";
 
   const ringStyle = focused
     ? { boxShadow: error ? `0 0 0 3px color-mix(in srgb, var(--destructive) 15%, transparent)` : `0 0 0 3px color-mix(in srgb, var(--ring) 35%, transparent)` }
@@ -372,7 +372,7 @@ export function MoneyInput({
   return (
     <Field label={label} required={required} hint={hint} error={error}>
       <div
-        className={`flex items-center rounded-lg overflow-hidden transition-all ${className}`}
+        className={`flex items-stretch ${heights[size]} rounded-lg overflow-hidden transition-all ${className}`}
         style={{
           border: `1.5px solid ${borderColor}`,
           backgroundColor: disabled ? "var(--muted)" : readOnly ? "var(--secondary)" : "var(--card)",
@@ -386,7 +386,7 @@ export function MoneyInput({
           type="button"
           disabled={disabled || readOnly || !onCurrencyChange}
           onClick={() => onCurrencyChange && setCurrencyOpen(v => !v)}
-          className={`flex items-center gap-1 px-3 shrink-0 h-full border-s transition-colors ${heights[size]}`}
+          className={`flex items-center gap-1 px-3 shrink-0 h-full self-stretch border-s transition-colors `}
           style={{
             borderColor: "var(--border-strong)",
             backgroundColor: "var(--secondary)",
@@ -487,8 +487,8 @@ export function QuantityInput({
   const borderColor = error
     ? "var(--destructive)"
     : focused
-    ? "var(--ring)"
-    : "var(--border-strong)";
+      ? "var(--ring)"
+      : "var(--border-strong)";
 
   const ringStyle = focused
     ? { boxShadow: `0 0 0 3px color-mix(in srgb, var(--ring) 35%, transparent)` }
@@ -613,8 +613,8 @@ export function UnitPriceInput({
   const borderColor = error
     ? "var(--destructive)"
     : focused
-    ? "var(--ring)"
-    : "var(--border-strong)";
+      ? "var(--ring)"
+      : "var(--border-strong)";
 
   return (
     <Field label={label} hint={hint} error={error}>
@@ -1247,7 +1247,7 @@ export function AmountInputsSection() {
           />
           <MoneyInput
             value="99500"
-            onChange={() => {}}
+            onChange={() => { }}
             currency="SAR"
             label="عرض للقراءة فقط"
             readOnly
@@ -1255,7 +1255,7 @@ export function AmountInputsSection() {
           />
           <MoneyInput
             value="15000"
-            onChange={() => {}}
+            onChange={() => { }}
             currency="SAR"
             label="حقل معطّل"
             disabled
@@ -1273,9 +1273,9 @@ export function AmountInputsSection() {
         <div className="mt-6 pt-6 border-t border-border">
           <p className="text-sm text-muted-foreground mb-4" style={{ fontWeight: 500 }}>أحجام الحقل</p>
           <div className="flex flex-col gap-3 max-w-xs">
-            <MoneyInput value="1500" onChange={() => {}} currency="SAR" size="sm" />
-            <MoneyInput value="25000" onChange={() => {}} currency="SAR" size="md" />
-            <MoneyInput value="480000" onChange={() => {}} currency="SAR" size="lg" />
+            <MoneyInput value="1500" onChange={() => { }} currency="SAR" size="sm" />
+            <MoneyInput value="25000" onChange={() => { }} currency="SAR" size="md" />
+            <MoneyInput value="480000" onChange={() => { }} currency="SAR" size="lg" />
           </div>
         </div>
       </DemoCard>
@@ -1317,14 +1317,14 @@ export function AmountInputsSection() {
           />
           <QuantityInput
             value={100}
-            onChange={() => {}}
+            onChange={() => { }}
             unit="pcs"
             label="بدون أزرار تحكم"
             showStepper={false}
           />
           <QuantityInput
             value={0}
-            onChange={() => {}}
+            onChange={() => { }}
             unit="kg"
             label="حقل معطّل"
             disabled
@@ -1366,7 +1366,7 @@ export function AmountInputsSection() {
           />
           <UnitPriceInput
             price="5500"
-            onPriceChange={() => {}}
+            onPriceChange={() => { }}
             unit="pallet"
             currency="SAR"
             label="سعر ثابت — للقراءة فقط"
@@ -1374,7 +1374,7 @@ export function AmountInputsSection() {
           />
           <UnitPriceInput
             price="0"
-            onPriceChange={() => {}}
+            onPriceChange={() => { }}
             unit="carton"
             currency="SAR"
             label="حالة خطأ"
@@ -1405,12 +1405,12 @@ export function AmountInputsSection() {
           />
           <PercentageInput
             value={20}
-            onChange={() => {}}
+            onChange={() => { }}
             label="بدون مبلغ معادل"
           />
           <PercentageInput
             value={15}
-            onChange={() => {}}
+            onChange={() => { }}
             baseAmount={baseForPct}
             label="حقل معطّل"
             disabled
@@ -1437,7 +1437,7 @@ export function AmountInputsSection() {
             />
             <QuantityInput
               value={0}
-              onChange={() => {}}
+              onChange={() => { }}
               unit={convToUnit}
               onUnitChange={setConvToUnit}
               label="وحدة التحويل إليها"

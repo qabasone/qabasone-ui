@@ -62,7 +62,7 @@ export default function App() {
   const next = currentIndex < sections.length - 1 ? sections[currentIndex + 1] : null;
 
   return (
-    <ToastProvider>
+    <ToastProvider dir="rtl" closeAriaLabel="إغلاق">
     <div dir="rtl" lang="ar" className="flex h-screen overflow-hidden bg-background" style={{ fontFamily: "var(--font-family)" }}>
       {/* Mobile overlay */}
       {mobileOpen && (

@@ -1,15 +1,32 @@
 /**
  * Reusable chart tooltip components.
- * All accept Recharts' injected props (active, payload, label)
- * plus optional config props for formatting and labelling.
- *
- * Usage:
- *   <Tooltip content={<ChartTooltip seriesLabels={{ revenue: "الإيرادات" }} valueFormatter={fmt} />} />
- *   <Tooltip content={<PieTooltip total={142300} valueFormatter={fmt} />} />
- *   <Tooltip content={<SingleTooltip label="القيمة" valueFormatter={fmt} />} />
+ * They work with Recharts Tooltip `content` prop.
  */
 
-// ── shared shell ──────────────────────────────────────────────────────────────
+interface ChartPayloadItem {
+  dataKey?: string;
+  name?: string;
+  value?: number | string;
+  color?: string;
+  stroke?: string;
+  fill?: string;
+  payload?: Record<string, unknown>;
+}
+
+interface BaseTooltipProps {
+  active?: boolean;
+  payload?: ChartPayloadItem[];
+  label?: string | number;
+}
+
+function toNumeric(value: number | string | undefined): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
 
 function TooltipShell({ children }: { children: React.ReactNode }) {
   return (
@@ -61,7 +78,10 @@ function TooltipRow({
   );
 }
 
-// ── ChartTooltip — area / bar / line charts ───────────────────────────────────
+export interface ChartTooltipProps extends BaseTooltipProps {
+  seriesLabels?: Record<string, string>;
+  valueFormatter?: (value: number, dataKey: string) => string;
+}
 
 export function ChartTooltip({
   active,
@@ -69,66 +89,62 @@ export function ChartTooltip({
   label,
   seriesLabels,
   valueFormatter,
-}: {
-  active?: boolean;
-  payload?: any[];
-  label?: string;
-  /** Map dataKey → Arabic display name */
-  seriesLabels?: Record<string, string>;
-  /** Format a raw numeric value to display string */
-  valueFormatter?: (value: number, dataKey: string) => string;
-}) {
+}: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
 
   return (
     <TooltipShell>
-      {label && <TooltipLabel label={String(label)} />}
+      {label != null && <TooltipLabel label={String(label)} />}
       <div className="space-y-1.5">
-        {payload.map((p: any) => (
-          <TooltipRow
-            key={p.dataKey}
-            color={p.color ?? p.stroke ?? p.fill}
-            name={seriesLabels?.[p.dataKey] ?? p.name ?? p.dataKey}
-            value={
-              valueFormatter
-                ? valueFormatter(p.value, p.dataKey)
-                : String(p.value)
-            }
-          />
-        ))}
+        {payload.map((p, index) => {
+          const dataKey = p.dataKey ?? p.name ?? `series-${index}`;
+          const numeric = toNumeric(p.value);
+          const rowValue = numeric != null
+            ? (valueFormatter ? valueFormatter(numeric, dataKey) : String(numeric))
+            : String(p.value ?? "");
+          return (
+            <TooltipRow
+              key={`${dataKey}-${index}`}
+              color={p.color ?? p.stroke ?? p.fill ?? "var(--muted-foreground)"}
+              name={seriesLabels?.[dataKey] ?? p.name ?? dataKey}
+              value={rowValue}
+            />
+          );
+        })}
       </div>
     </TooltipShell>
   );
 }
 
-// ── PieTooltip — pie / donut charts ──────────────────────────────────────────
+export interface PieTooltipProps extends BaseTooltipProps {
+  total?: number;
+  valueFormatter?: (value: number, name: string) => string;
+}
 
 export function PieTooltip({
   active,
   payload,
   total,
   valueFormatter,
-}: {
-  active?: boolean;
-  payload?: any[];
-  /** Pass the sum of all values to show percentage */
-  total?: number;
-  valueFormatter?: (value: number, name: string) => string;
-}) {
+}: PieTooltipProps) {
   if (!active || !payload?.length) return null;
   const p = payload[0];
-  const pct = total ? Math.round((p.value / total) * 100) : null;
+  const numeric = toNumeric(p.value);
+  const pct = total && numeric != null ? Math.round((numeric / total) * 100) : null;
+  const name = p.name ?? p.dataKey ?? "Series";
 
   return (
     <TooltipShell>
       <span className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2" style={{ fontWeight: 500 }}>
-        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: p.payload?.fill ?? p.color }} />
-        {p.name}
+        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: p.fill ?? p.color ?? "var(--muted-foreground)" }} />
+        {name}
       </span>
       <div className="h-px bg-border -mx-0.5 mb-2.5" />
       <div className="flex items-baseline justify-between gap-4">
         <span className="text-foreground amount" style={{ fontSize: "13px", fontWeight: 700 }}>
-          {valueFormatter ? valueFormatter(p.value, p.name) : p.value}
+          {numeric != null
+            ? (valueFormatter ? valueFormatter(numeric, name) : String(numeric))
+            : String(p.value ?? "")}
         </span>
         {pct != null && (
           <span className="text-xs text-muted-foreground">{pct}%</span>
@@ -138,7 +154,10 @@ export function PieTooltip({
   );
 }
 
-// ── SingleTooltip — single-series sparklines / mini charts ───────────────────
+export interface SingleTooltipProps extends BaseTooltipProps {
+  seriesLabel?: string;
+  valueFormatter?: (value: number) => string;
+}
 
 export function SingleTooltip({
   active,
@@ -146,23 +165,20 @@ export function SingleTooltip({
   label,
   seriesLabel,
   valueFormatter,
-}: {
-  active?: boolean;
-  payload?: any[];
-  label?: string;
-  seriesLabel?: string;
-  valueFormatter?: (value: number) => string;
-}) {
+}: SingleTooltipProps) {
   if (!active || !payload?.length) return null;
   const p = payload[0];
+  const numeric = toNumeric(p.value);
 
   return (
     <TooltipShell>
-      {label && <TooltipLabel label={String(label)} />}
+      {label != null && <TooltipLabel label={String(label)} />}
       <TooltipRow
-        color={p.color ?? p.stroke ?? p.fill}
-        name={seriesLabel ?? p.name ?? p.dataKey}
-        value={valueFormatter ? valueFormatter(p.value) : String(p.value)}
+        color={p.color ?? p.stroke ?? p.fill ?? "var(--muted-foreground)"}
+        name={seriesLabel ?? p.name ?? p.dataKey ?? "Series"}
+        value={numeric != null
+          ? (valueFormatter ? valueFormatter(numeric) : String(numeric))
+          : String(p.value ?? "")}
       />
     </TooltipShell>
   );

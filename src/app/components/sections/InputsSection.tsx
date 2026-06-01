@@ -1,14 +1,54 @@
 import { useState } from "react";
 import { Search, Eye, EyeOff, ChevronDown, Calendar, Phone, Mail, Percent } from "lucide-react";
 import {
-  SearchableDropdown,
-  MultiSelectDropdown,
-  UserDropdown,
-  AccountDropdown,
+  SearchableDropdown as BaseSearchableDropdown,
+  MultiSelectDropdown as BaseMultiSelectDropdown,
+  UserDropdown as BaseUserDropdown,
+  AccountDropdown as BaseAccountDropdown,
+  type SearchableDropdownProps,
+  type MultiSelectDropdownProps,
+  type UserDropdownProps,
+  type AccountDropdownProps,
   type DropdownOption,
   type UserOption,
   type AccountOption,
 } from "@/ui/components/SearchableDropdowns";
+
+const AR_DROPDOWN_COMMON = {
+  dir: "rtl" as const,
+  searchPlaceholder: "ابحث...",
+  emptyText: "لا توجد نتائج",
+};
+
+const SearchableDropdown = (props: SearchableDropdownProps) => (
+  <BaseSearchableDropdown {...AR_DROPDOWN_COMMON} {...props} />
+);
+
+const MultiSelectDropdown = (props: MultiSelectDropdownProps) => (
+  <BaseMultiSelectDropdown
+    {...AR_DROPDOWN_COMMON}
+    clearAllLabel="مسح الكل"
+    selectedCountText={(count) => `${count} محدد`}
+    {...props}
+  />
+);
+
+const UserDropdown = (props: UserDropdownProps) => (
+  <BaseUserDropdown
+    {...AR_DROPDOWN_COMMON}
+    searchPlaceholder="ابحث عن مستخدم..."
+    {...props}
+  />
+);
+
+const AccountDropdown = (props: AccountDropdownProps) => (
+  <BaseAccountDropdown
+    {...AR_DROPDOWN_COMMON}
+    searchPlaceholder="ابحث باسم الحساب أو الرقم..."
+    typeIconMap={{ بنك: "ب", خزنة: "خ", عهدة: "ع", محفظة: "م" }}
+    {...props}
+  />
+);
 
 function Field({
   label,

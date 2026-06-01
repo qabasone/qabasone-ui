@@ -1,53 +1,68 @@
-import { useState } from "react";
 import { ChevronRight, ChevronLeft, ChevronsRight, ChevronsLeft } from "lucide-react";
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+type Direction = "rtl" | "ltr" | "auto";
 
-export interface PaginationProps {
-  /** Total number of rows/items */
-  total: number;
-  /** Current active page (1-based) */
-  page: number;
-  /** Rows per page */
-  pageSize: number;
-  /** Called when the user changes page */
-  onPageChange: (page: number) => void;
-  /** Called when the user changes page size */
-  onPageSizeChange?: (size: number) => void;
-  /** Available page size options. Default: [10, 25, 50, 100] */
-  pageSizeOptions?: number[];
-  /**
-   * Visual variant:
-   * - "full"    — count label + page sizes + page buttons (default)
-   * - "compact" — count label + prev/next only
-   * - "minimal" — prev/next + page indicator only
-   */
-  variant?: "full" | "compact" | "minimal";
-  /** Custom label for the total. Receives (from, to, total). */
-  renderCount?: (from: number, to: number, total: number) => React.ReactNode;
+export interface PaginationLabels {
+  rangePrefix: string;
+  rangeFromOf: string;
+  rowsUnit: string;
+  prevPageTitle: string;
+  nextPageTitle: string;
+  firstPageTitle: string;
+  lastPageTitle: string;
+  prevShortTitle: string;
+  nextShortTitle: string;
+  firstShortTitle: string;
+  lastShortTitle: string;
 }
 
-// ── Helper: page-number list with ellipsis ─────────────────────────────────────
+const DEFAULT_LABELS: PaginationLabels = {
+  rangePrefix: "Showing",
+  rangeFromOf: "of",
+  rowsUnit: "rows",
+  prevPageTitle: "Previous page",
+  nextPageTitle: "Next page",
+  firstPageTitle: "First page",
+  lastPageTitle: "Last page",
+  prevShortTitle: "Previous",
+  nextShortTitle: "Next",
+  firstShortTitle: "First",
+  lastShortTitle: "Last",
+};
 
-function buildPages(current: number, total: number): (number | "…")[] {
+export interface PaginationProps {
+  total: number;
+  page: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange?: (size: number) => void;
+  pageSizeOptions?: number[];
+  variant?: "full" | "compact" | "minimal";
+  renderCount?: (from: number, to: number, total: number) => React.ReactNode;
+  dir?: Direction;
+  labels?: Partial<PaginationLabels>;
+}
+
+function buildPages(current: number, total: number): (number | "...")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  const pages: (number | "…")[] = [];
+  const pages: (number | "...")[] = [];
   pages.push(1);
-  if (current > 4) pages.push("…");
+  if (current > 4) pages.push("...");
   const lo = Math.max(2, current - 1);
   const hi = Math.min(total - 1, current + 1);
   for (let p = lo; p <= hi; p++) pages.push(p);
-  if (current < total - 3) pages.push("…");
+  if (current < total - 3) pages.push("...");
   pages.push(total);
   return pages;
 }
 
-// ── Icon button helper ─────────────────────────────────────────────────────────
-
 function NavBtn({
   onClick, disabled, children, title,
 }: {
-  onClick: () => void; disabled: boolean; children: React.ReactNode; title?: string;
+  onClick: () => void;
+  disabled: boolean;
+  children: React.ReactNode;
+  title?: string;
 }) {
   return (
     <button
@@ -61,8 +76,6 @@ function NavBtn({
   );
 }
 
-// ── Main component ─────────────────────────────────────────────────────────────
-
 export function Pagination({
   total,
   page,
@@ -72,10 +85,19 @@ export function Pagination({
   pageSizeOptions = [10, 25, 50, 100],
   variant = "full",
   renderCount,
+  dir = "auto",
+  labels,
 }: PaginationProps) {
+  const text = { ...DEFAULT_LABELS, ...labels };
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const from = Math.min((page - 1) * pageSize + 1, total);
   const to = Math.min(page * pageSize, total);
+  const isRtl = dir === "rtl";
+
+  const PrevIcon = isRtl ? ChevronRight : ChevronLeft;
+  const NextIcon = isRtl ? ChevronLeft : ChevronRight;
+  const FirstIcon = isRtl ? ChevronsRight : ChevronsLeft;
+  const LastIcon = isRtl ? ChevronsLeft : ChevronsRight;
 
   const goTo = (p: number) => {
     const clamped = Math.max(1, Math.min(p, totalPages));
@@ -84,77 +106,73 @@ export function Pagination({
 
   const countLabel = renderCount ? renderCount(from, to, total) : (
     <span className="text-xs text-muted-foreground" style={{ fontWeight: 500 }}>
-      عرض{" "}
+      {text.rangePrefix}{" "}
       <span className="text-foreground amount" style={{ fontWeight: 600 }}>
-        {from}–{to}
+        {from}-{to}
       </span>{" "}
-      من أصل{" "}
-      <span className="text-foreground amount" style={{ fontWeight: 600 }}>{total}</span>
+      {text.rangeFromOf}{" "}
+      <span className="text-foreground amount" style={{ fontWeight: 600 }}>{total}</span>{" "}
+      {text.rowsUnit}
     </span>
   );
 
-  // ── minimal ──────────────────────────────────────────────────────────────────
   if (variant === "minimal") {
     return (
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3" dir={dir}>
         {countLabel}
         <div className="flex items-center gap-1.5">
-          <NavBtn onClick={() => goTo(page - 1)} disabled={page === 1} title="الصفحة السابقة">
-            <ChevronRight size={14} />
+          <NavBtn onClick={() => goTo(page - 1)} disabled={page === 1} title={text.prevPageTitle}>
+            <PrevIcon size={14} />
           </NavBtn>
           <span className="text-xs text-muted-foreground px-1" style={{ fontWeight: 500 }}>
             <span className="text-foreground amount" style={{ fontWeight: 600 }}>{page}</span>
             {" / "}
             <span className="amount">{totalPages}</span>
           </span>
-          <NavBtn onClick={() => goTo(page + 1)} disabled={page === totalPages} title="الصفحة التالية">
-            <ChevronLeft size={14} />
+          <NavBtn onClick={() => goTo(page + 1)} disabled={page === totalPages} title={text.nextPageTitle}>
+            <NextIcon size={14} />
           </NavBtn>
         </div>
       </div>
     );
   }
 
-  // ── compact ──────────────────────────────────────────────────────────────────
   if (variant === "compact") {
     return (
-      <div className="flex items-center justify-between gap-3 flex-wrap">
+      <div className="flex items-center justify-between gap-3 flex-wrap" dir={dir}>
         {countLabel}
         <div className="flex items-center gap-1">
-          <NavBtn onClick={() => goTo(1)} disabled={page === 1} title="الصفحة الأولى">
-            <ChevronsRight size={13} />
+          <NavBtn onClick={() => goTo(1)} disabled={page === 1} title={text.firstPageTitle}>
+            <FirstIcon size={13} />
           </NavBtn>
-          <NavBtn onClick={() => goTo(page - 1)} disabled={page === 1} title="السابق">
-            <ChevronRight size={14} />
+          <NavBtn onClick={() => goTo(page - 1)} disabled={page === 1} title={text.prevShortTitle}>
+            <PrevIcon size={14} />
           </NavBtn>
-          <span className="h-8 px-3 flex items-center text-xs rounded-lg border border-primary bg-primary/8"
-            style={{ color: "var(--primary)", fontWeight: 600 }}>
+          <span className="h-8 px-3 flex items-center text-xs rounded-lg border border-primary bg-primary/8" style={{ color: "var(--primary)", fontWeight: 600 }}>
             <span className="amount">{page}</span>
             <span className="text-muted-foreground mx-1">/</span>
             <span className="amount text-muted-foreground" style={{ fontWeight: 400 }}>{totalPages}</span>
           </span>
-          <NavBtn onClick={() => goTo(page + 1)} disabled={page === totalPages} title="التالي">
-            <ChevronLeft size={14} />
+          <NavBtn onClick={() => goTo(page + 1)} disabled={page === totalPages} title={text.nextShortTitle}>
+            <NextIcon size={14} />
           </NavBtn>
-          <NavBtn onClick={() => goTo(totalPages)} disabled={page === totalPages} title="الصفحة الأخيرة">
-            <ChevronsLeft size={13} />
+          <NavBtn onClick={() => goTo(totalPages)} disabled={page === totalPages} title={text.lastPageTitle}>
+            <LastIcon size={13} />
           </NavBtn>
         </div>
       </div>
     );
   }
 
-  // ── full (default) ────────────────────────────────────────────────────────────
   const pages = buildPages(page, totalPages);
 
   return (
-    <div className="flex items-center justify-between gap-3 flex-wrap">
-      {/* Left: count + page size */}
+    <div className="flex items-center justify-between gap-3 flex-wrap" dir={dir}>
       <div className="flex items-center gap-3">
         {countLabel}
         {onPageSizeChange && (
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground">عرض</span>
+            <span className="text-xs text-muted-foreground">{text.rangePrefix}</span>
             <div className="relative">
               <select
                 value={pageSize}
@@ -168,28 +186,27 @@ export function Pagination({
               </select>
               <span className="absolute top-1/2 -translate-y-1/2 end-1.5 text-muted-foreground pointer-events-none" style={{ fontSize: "10px" }}>▾</span>
             </div>
-            <span className="text-xs text-muted-foreground">صف</span>
+            <span className="text-xs text-muted-foreground">{text.rowsUnit}</span>
           </div>
         )}
       </div>
 
-      {/* Right: page buttons */}
       <div className="flex items-center gap-1">
-        <NavBtn onClick={() => goTo(1)} disabled={page === 1} title="الأولى">
-          <ChevronsRight size={13} />
+        <NavBtn onClick={() => goTo(1)} disabled={page === 1} title={text.firstShortTitle}>
+          <FirstIcon size={13} />
         </NavBtn>
-        <NavBtn onClick={() => goTo(page - 1)} disabled={page === 1} title="السابق">
-          <ChevronRight size={14} />
+        <NavBtn onClick={() => goTo(page - 1)} disabled={page === 1} title={text.prevShortTitle}>
+          <PrevIcon size={14} />
         </NavBtn>
 
         <div className="flex items-center gap-0.5 mx-0.5">
           {pages.map((p, i) =>
-            p === "…" ? (
+            p === "..." ? (
               <span
                 key={`ellipsis-${i}`}
                 className="w-8 h-8 flex items-center justify-center text-xs text-muted-foreground select-none"
               >
-                …
+                ...
               </span>
             ) : (
               <button
@@ -208,11 +225,11 @@ export function Pagination({
           )}
         </div>
 
-        <NavBtn onClick={() => goTo(page + 1)} disabled={page === totalPages} title="التالي">
-          <ChevronLeft size={14} />
+        <NavBtn onClick={() => goTo(page + 1)} disabled={page === totalPages} title={text.nextShortTitle}>
+          <NextIcon size={14} />
         </NavBtn>
-        <NavBtn onClick={() => goTo(totalPages)} disabled={page === totalPages} title="الأخيرة">
-          <ChevronsLeft size={13} />
+        <NavBtn onClick={() => goTo(totalPages)} disabled={page === totalPages} title={text.lastShortTitle}>
+          <LastIcon size={13} />
         </NavBtn>
       </div>
     </div>

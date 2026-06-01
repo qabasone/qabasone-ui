@@ -4,83 +4,85 @@ import {
   Trash2, AlertTriangle, Info, CheckCircle2, HelpCircle, Loader2,
 } from "lucide-react";
 
-// ── Variant config ────────────────────────────────────────────────────────────
+type Direction = "rtl" | "ltr" | "auto";
 
 const VARIANTS = {
   danger: {
-    iconBg:    "var(--destructive-muted)",
+    iconBg: "var(--destructive-muted)",
     iconColor: "var(--destructive)",
-    btnBg:     "var(--destructive)",
-    btnColor:  "var(--destructive-foreground)",
-    btnHover:  "color-mix(in srgb, var(--destructive) 88%, black)",
+    btnBg: "var(--destructive)",
+    btnColor: "var(--destructive-foreground)",
+    btnHover: "color-mix(in srgb, var(--destructive) 88%, black)",
     defaultIcon: Trash2,
-    defaultConfirmLabel: "حذف",
   },
   warning: {
-    iconBg:    "var(--warning-muted)",
+    iconBg: "var(--warning-muted)",
     iconColor: "var(--warning)",
-    btnBg:     "var(--warning)",
-    btnColor:  "var(--warning-foreground)",
-    btnHover:  "color-mix(in srgb, var(--warning) 88%, black)",
+    btnBg: "var(--warning)",
+    btnColor: "var(--warning-foreground)",
+    btnHover: "color-mix(in srgb, var(--warning) 88%, black)",
     defaultIcon: AlertTriangle,
-    defaultConfirmLabel: "تأكيد",
   },
   info: {
-    iconBg:    "var(--info-muted)",
+    iconBg: "var(--info-muted)",
     iconColor: "var(--info)",
-    btnBg:     "var(--info)",
-    btnColor:  "var(--info-foreground)",
-    btnHover:  "color-mix(in srgb, var(--info) 88%, black)",
+    btnBg: "var(--info)",
+    btnColor: "var(--info-foreground)",
+    btnHover: "color-mix(in srgb, var(--info) 88%, black)",
     defaultIcon: Info,
-    defaultConfirmLabel: "حسناً",
   },
   success: {
-    iconBg:    "var(--success-muted)",
+    iconBg: "var(--success-muted)",
     iconColor: "var(--success)",
-    btnBg:     "var(--success)",
-    btnColor:  "var(--success-foreground)",
-    btnHover:  "color-mix(in srgb, var(--success) 88%, black)",
+    btnBg: "var(--success)",
+    btnColor: "var(--success-foreground)",
+    btnHover: "color-mix(in srgb, var(--success) 88%, black)",
     defaultIcon: CheckCircle2,
-    defaultConfirmLabel: "تأكيد",
   },
   neutral: {
-    iconBg:    "var(--primary-muted)",
+    iconBg: "var(--primary-muted)",
     iconColor: "var(--primary)",
-    btnBg:     "var(--primary)",
-    btnColor:  "var(--primary-foreground)",
-    btnHover:  "color-mix(in srgb, var(--primary) 88%, black)",
+    btnBg: "var(--primary)",
+    btnColor: "var(--primary-foreground)",
+    btnHover: "color-mix(in srgb, var(--primary) 88%, black)",
     defaultIcon: HelpCircle,
-    defaultConfirmLabel: "تأكيد",
   },
+} as const;
+
+const DEFAULT_CONFIRM_LABELS = {
+  danger: "Delete",
+  warning: "Confirm",
+  info: "OK",
+  success: "Confirm",
+  neutral: "Confirm",
 } as const;
 
 export type ConfirmVariant = keyof typeof VARIANTS;
 
-// ── Props ─────────────────────────────────────────────────────────────────────
+interface ConfirmModalTexts {
+  cancelLabel?: string;
+  confirmLabels?: Partial<Record<ConfirmVariant, string>>;
+}
 
 export interface ConfirmModalProps {
   open: boolean;
   onConfirm: () => void;
   onCancel: () => void;
-
   title: string;
   description?: React.ReactNode;
-
   variant?: ConfirmVariant;
   icon?: React.ElementType;
-
   confirmLabel?: string;
   cancelLabel?: string;
-
   loading?: boolean;
   closeOnBackdrop?: boolean;
-
   checkboxLabel?: string;
   checkboxChecked?: boolean;
   onCheckboxChange?: (checked: boolean) => void;
+  dir?: Direction;
+  texts?: ConfirmModalTexts;
+  portalTarget?: HTMLElement | null;
 }
-
-// ── Component ─────────────────────────────────────────────────────────────────
 
 export function ConfirmModal({
   open,
@@ -91,22 +93,28 @@ export function ConfirmModal({
   variant = "neutral",
   icon,
   confirmLabel,
-  cancelLabel = "إلغاء",
+  cancelLabel,
   loading = false,
   closeOnBackdrop = true,
   checkboxLabel,
   checkboxChecked = false,
   onCheckboxChange,
+  dir = "auto",
+  texts,
+  portalTarget,
 }: ConfirmModalProps) {
   const cfg = VARIANTS[variant];
   const Icon = icon ?? cfg.defaultIcon;
-  const resolvedConfirmLabel = confirmLabel ?? cfg.defaultConfirmLabel;
 
-  const cancelRef  = useRef<HTMLButtonElement>(null);
+  const resolvedConfirmLabel = confirmLabel
+    ?? texts?.confirmLabels?.[variant]
+    ?? DEFAULT_CONFIRM_LABELS[variant];
+  const resolvedCancelLabel = cancelLabel ?? texts?.cancelLabel ?? "Cancel";
+
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
-  const panelRef   = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
-  // Focus management: focus confirm on open (cancel for danger to be safe)
   useEffect(() => {
     if (!open) return;
     const timer = setTimeout(() => {
@@ -115,17 +123,18 @@ export function ConfirmModal({
     return () => clearTimeout(timer);
   }, [open, variant]);
 
-  // Keyboard: Escape → cancel, Enter → confirm
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { e.stopPropagation(); onCancel(); }
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        onCancel();
+      }
     };
     document.addEventListener("keydown", handler, { capture: true });
     return () => document.removeEventListener("keydown", handler, { capture: true });
   }, [open, onCancel]);
 
-  // Focus trap
   useEffect(() => {
     if (!open || !panelRef.current) return;
     const panel = panelRef.current;
@@ -140,9 +149,11 @@ export function ConfirmModal({
       const first = els[0];
       const last = els[els.length - 1];
       if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault(); last.focus();
+        e.preventDefault();
+        last.focus();
       } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault(); first.focus();
+        e.preventDefault();
+        first.focus();
       }
     };
     document.addEventListener("keydown", trap);
@@ -150,10 +161,12 @@ export function ConfirmModal({
   }, [open]);
 
   if (!open) return null;
+  const resolvedPortalTarget = portalTarget ?? (typeof document !== "undefined" ? document.body : null);
+  if (!resolvedPortalTarget) return null;
 
   return createPortal(
     <div
-      dir="rtl"
+      dir={dir}
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-title"
@@ -161,7 +174,6 @@ export function ConfirmModal({
       className="fixed inset-0 flex items-center justify-center p-4"
       style={{ zIndex: 10000, fontFamily: "var(--font-family)" }}
     >
-      {/* Backdrop */}
       <div
         className="absolute inset-0"
         style={{
@@ -172,7 +184,6 @@ export function ConfirmModal({
         onClick={closeOnBackdrop && !loading ? onCancel : undefined}
       />
 
-      {/* Panel */}
       <div
         ref={panelRef}
         className="relative w-full"
@@ -185,7 +196,6 @@ export function ConfirmModal({
           padding: "24px",
         }}
       >
-        {/* Icon badge */}
         <div
           className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
           style={{ backgroundColor: cfg.iconBg }}
@@ -193,7 +203,6 @@ export function ConfirmModal({
           <Icon size={22} style={{ color: cfg.iconColor }} strokeWidth={2.2} />
         </div>
 
-        {/* Title */}
         <h2
           id="confirm-title"
           style={{ color: "var(--foreground)", marginBottom: description ? "8px" : "20px" }}
@@ -201,7 +210,6 @@ export function ConfirmModal({
           {title}
         </h2>
 
-        {/* Description */}
         {description && (
           <p
             id="confirm-desc"
@@ -212,9 +220,7 @@ export function ConfirmModal({
           </p>
         )}
 
-        {/* Footer */}
         <div className="flex items-center gap-3">
-          {/* Optional checkbox */}
           {checkboxLabel && onCheckboxChange && (
             <label className="flex items-center gap-2 cursor-pointer flex-1 min-w-0">
               <div className="relative shrink-0">
@@ -246,7 +252,6 @@ export function ConfirmModal({
 
           {!checkboxLabel && <div className="flex-1" />}
 
-          {/* Cancel */}
           <button
             ref={cancelRef}
             onClick={onCancel}
@@ -261,10 +266,9 @@ export function ConfirmModal({
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--muted)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--card)"; }}
           >
-            {cancelLabel}
+            {resolvedCancelLabel}
           </button>
 
-          {/* Confirm */}
           <button
             ref={confirmRef}
             onClick={onConfirm}
@@ -286,6 +290,6 @@ export function ConfirmModal({
         </div>
       </div>
     </div>,
-    document.body
+    resolvedPortalTarget
   );
 }

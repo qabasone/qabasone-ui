@@ -32,6 +32,13 @@ This directory is the source of truth for reusable UI building blocks.
 - Keep compatibility wrapper files at `src/ui/components/*.tsx` stable.
 - Prefer implementing new logic in the layer folders (`atoms`, `molecules`, `organisms`) and re-export from wrappers.
 
+## Reusability Rules
+
+- Do not hardcode app locale assumptions in reusable components.
+- Components that render labels/placeholders should expose override props for those texts.
+- Components that open portals should allow overriding the portal target and remain safe when `document` is unavailable.
+- Components should allow direction configuration (`ltr`/`rtl`/`auto`) instead of forcing one mode.
+
 ## Naming
 
 - Components: `PascalCase.tsx`
