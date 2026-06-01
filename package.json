@@ -1,5 +1,5 @@
 {
-  "name": "qabasone-ui",
+  "name": "@qabasone/qabasone-ui",
   "version": "0.0.1",
   "description": "Reusable Qabasone design system components for React applications.",
   "type": "module",
@@ -99,7 +99,7 @@
   },
   "homepage": "https://github.com/qabasone/qabasone-ui#readme",
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com"
   },
   "sideEffects": [
     "**/*.css"
