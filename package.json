@@ -70,9 +70,29 @@
       "types": "./dist/ui/*.d.ts",
       "import": "./dist/ui/*.js"
     },
+    "./components": {
+      "types": "./dist/ui/components/index.d.ts",
+      "import": "./dist/ui/components/index.js"
+    },
     "./components/*": {
       "types": "./dist/ui/components/*.d.ts",
       "import": "./dist/ui/components/*.js"
+    },
+    "./components/atoms": {
+      "types": "./dist/ui/components/atoms/index.d.ts",
+      "import": "./dist/ui/components/atoms/index.js"
+    },
+    "./components/molecules": {
+      "types": "./dist/ui/components/molecules/index.d.ts",
+      "import": "./dist/ui/components/molecules/index.js"
+    },
+    "./components/organisms": {
+      "types": "./dist/ui/components/organisms/index.d.ts",
+      "import": "./dist/ui/components/organisms/index.js"
+    },
+    "./components/hooks": {
+      "types": "./dist/ui/components/hooks/index.d.ts",
+      "import": "./dist/ui/components/hooks/index.js"
     },
     "./hooks/*": {
       "types": "./dist/ui/components/hooks/*.d.ts",
