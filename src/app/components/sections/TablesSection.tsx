@@ -1381,7 +1381,7 @@ export function TablesSection() {
         {/* Code snippet */}
         <div className="border-t border-border bg-muted/20 px-6 py-4">
           <p className="text-xs text-muted-foreground mb-2" style={{ fontWeight: 600 }}>مثال على الاستخدام</p>
-          <pre className="text-xs text-foreground leading-relaxed overflow-x-auto" dir="ltr">{`import { EntityLink } from "@/components/EntityLink";
+          <pre className="text-xs text-foreground leading-relaxed overflow-x-auto" dir="ltr">{`import { EntityLink } from "@qabasone/qabasone-ui/components/EntityLink";
 
 // ID column — SPA callback
 <EntityLink variant="id" label="INV-2024-0130" onClick={() => openInvoice(id)} />
@@ -1413,7 +1413,7 @@ export function TablesSection() {
         <pre
           className="text-xs text-foreground leading-relaxed overflow-x-auto p-6 bg-muted/20"
           dir="ltr"
-        >{`import { ContextMenuTrigger } from "@/components/ContextMenu";
+        >{`import { ContextMenuTrigger } from "@qabasone/qabasone-ui/components/ContextMenu";
 
 // Wrap any trigger element
 <ContextMenuTrigger groups={[
@@ -1434,7 +1434,7 @@ export function TablesSection() {
 </ContextMenuTrigger>
 
 // For right-click on rows, use the hook:
-import { useContextMenu } from "@/components/ContextMenu";
+import { useContextMenu } from "@qabasone/qabasone-ui/components/ContextMenu";
 
 const { open, menuElement } = useContextMenu(groups);
 <tr onContextMenu={e => { e.preventDefault(); open(e.clientX, e.clientY); }}>
