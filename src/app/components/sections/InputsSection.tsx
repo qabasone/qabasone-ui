@@ -8,7 +8,7 @@ import {
   type DropdownOption,
   type UserOption,
   type AccountOption,
-} from "../SearchableDropdowns";
+} from "@/ui/components/SearchableDropdowns";
 
 function Field({
   label,

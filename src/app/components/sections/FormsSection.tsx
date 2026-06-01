@@ -4,8 +4,8 @@ import {
   Plus, Trash2, ChevronLeft, ChevronRight, FileText,
   Users, ArrowLeftRight, Package, Check, X,
 } from "lucide-react";
-import { SearchableDropdown, UserDropdown, AccountDropdown } from "../SearchableDropdowns";
-import type { DropdownOption, UserOption, AccountOption } from "../SearchableDropdowns";
+import { SearchableDropdown, UserDropdown, AccountDropdown } from "@/ui/components/SearchableDropdowns";
+import type { DropdownOption, UserOption, AccountOption } from "@/ui/components/SearchableDropdowns";
 
 // ─── Shared primitives ────────────────────────────────────────────────────────
 

@@ -16,10 +16,10 @@ import {
   Archive,
   Send,
 } from "lucide-react";
-import { Pagination } from "../Pagination";
-import { ContextMenuTrigger } from "../ContextMenu";
-import type { ContextMenuGroup } from "../ContextMenu";
-import { EntityLink } from "../EntityLink";
+import { Pagination } from "@/ui/components/Pagination";
+import { ContextMenuTrigger } from "@/ui/components/ContextMenu";
+import type { ContextMenuGroup } from "@/ui/components/ContextMenu";
+import { EntityLink } from "@/ui/components/EntityLink";
 
 // ── Sample data (30 rows so pagination is meaningful) ─────────────────────────
 

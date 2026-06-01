@@ -3,7 +3,7 @@ import {
   Trash2, AlertTriangle, Info, CheckCircle2, HelpCircle,
   LogOut, Archive, RefreshCw, Send, ShieldAlert, Unlink,
 } from "lucide-react";
-import { ConfirmModal, type ConfirmVariant } from "../ConfirmModal";
+import { ConfirmModal, type ConfirmVariant } from "@/ui/components/ConfirmModal";
 
 // ── Trigger button ────────────────────────────────────────────────────────────
 

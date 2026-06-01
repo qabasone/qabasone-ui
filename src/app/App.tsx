@@ -4,7 +4,7 @@ import {
   Tag, LayoutGrid, Inbox, PanelRight, FileText, Users, LayoutDashboard,
   ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn,
 } from "lucide-react";
-import { ToastProvider } from "./components/Toast";
+import { ToastProvider } from "@/ui/components/Toast";
 import { ColorsSection } from "./components/sections/ColorsSection";
 import { TypographySection } from "./components/sections/TypographySection";
 import { SpacingSection } from "./components/sections/SpacingSection";

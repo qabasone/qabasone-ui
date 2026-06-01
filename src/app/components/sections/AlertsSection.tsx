@@ -1,5 +1,5 @@
-import { ToastItem, useToast } from "../Toast";
-import type { ToastVariant, ToastPosition } from "../Toast";
+import { ToastItem, useToast } from "@/ui/components/Toast";
+import type { ToastVariant, ToastPosition } from "@/ui/components/Toast";
 
 // ── Static preview row ────────────────────────────────────────────────────────
 

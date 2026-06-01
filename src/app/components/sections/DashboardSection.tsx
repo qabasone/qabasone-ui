@@ -1,6 +1,6 @@
 import { TrendingUp, TrendingDown, AlertCircle, Users, FileText, Wallet, Clock, MoreVertical, Check, ArrowLeft } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { ChartTooltip, PieTooltip, SingleTooltip } from "../ChartTooltips";
+import { ChartTooltip, PieTooltip, SingleTooltip } from "@/ui/components/ChartTooltips";
 
 const revenueData = [
   { month: "يول", revenue: 180000, expenses: 110000 },
