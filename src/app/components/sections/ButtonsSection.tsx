@@ -1,50 +1,26 @@
 import { useState } from "react";
 import {
-  Plus, Printer, Download, Pencil, Trash2, Check, X, FileText,
-  ChevronDown, Loader2, Save, Send, Eye, ArrowLeft
+  Plus,
+  Printer,
+  Download,
+  Pencil,
+  Trash2,
+  Check,
+  X,
+  FileText,
+  Save,
+  Send,
+  Eye,
+  ArrowLeft,
+  Wallet,
+  Archive,
+  Copy,
+  BadgeCheck,
+  HandCoins,
+  RotateCcw,
 } from "lucide-react";
-
-function Btn({
-  children,
-  variant = "primary",
-  size = "md",
-  icon,
-  loading,
-  disabled,
-  iconOnly,
-}: {
-  children?: React.ReactNode;
-  variant?: "primary" | "secondary" | "ghost" | "danger" | "success" | "outline";
-  size?: "sm" | "md" | "lg";
-  icon?: React.ReactNode;
-  loading?: boolean;
-  disabled?: boolean;
-  iconOnly?: boolean;
-}) {
-  const base = "inline-flex items-center justify-center gap-2 rounded-lg cursor-pointer transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed shrink-0 font-medium";
-
-  const sizes: Record<string, string> = {
-    sm: iconOnly ? "w-8 h-8" : "h-8 px-3 text-sm",
-    md: iconOnly ? "w-10 h-10" : "h-10 px-4 text-sm",
-    lg: iconOnly ? "w-11 h-11" : "h-11 px-5 text-base",
-  };
-
-  const variants: Record<string, string> = {
-    primary: "bg-primary text-primary-foreground hover:bg-blue-700 active:bg-blue-800",
-    secondary: "bg-secondary text-secondary-foreground border border-border hover:bg-muted",
-    ghost: "text-foreground hover:bg-muted",
-    danger: "bg-destructive text-destructive-foreground hover:bg-red-700",
-    success: "bg-success text-success-foreground hover:bg-green-700",
-    outline: "border border-border text-foreground hover:bg-muted",
-  };
-
-  return (
-    <button className={`${base} ${sizes[size]} ${variants[variant]}`} disabled={disabled || loading}>
-      {loading ? <Loader2 size={16} className="animate-spin" /> : icon}
-      {!iconOnly && children}
-    </button>
-  );
-}
+import { Button } from "@/ui/components/Button";
+import { SplitButton } from "@/ui/components/SplitButton";
 
 export function ButtonsSection() {
   const [loading, setLoading] = useState(false);
@@ -53,135 +29,241 @@ export function ButtonsSection() {
     <div className="space-y-10">
       <div>
         <h1 className="text-foreground mb-1">الأزرار</h1>
-        <p className="text-muted-foreground">جميع أنواع وأحجام الأزرار في النظام</p>
+        <p className="text-muted-foreground">
+          نظام أزرار ذري قابل لإعادة الاستخدام، ومجهز لإجراءات النظام المحاسبي.
+        </p>
       </div>
 
-      {/* Variants */}
       <section className="bg-card rounded-2xl border border-border p-6 space-y-6">
-        <h3>الأنواع</h3>
+        <h3>الأنواع الأساسية</h3>
         <div className="flex flex-wrap gap-3">
-          <Btn variant="primary">حفظ</Btn>
-          <Btn variant="secondary">إلغاء</Btn>
-          <Btn variant="outline">تعديل</Btn>
-          <Btn variant="ghost">عرض</Btn>
-          <Btn variant="success" icon={<Check size={15} />}>تأكيد</Btn>
-          <Btn variant="danger" icon={<Trash2 size={15} />}>حذف</Btn>
+          <Button variant="primary">حفظ</Button>
+          <Button variant="secondary">إلغاء</Button>
+          <Button variant="outline">تعديل</Button>
+          <Button variant="ghost">عرض</Button>
+          <Button variant="success" startIcon={<Check size={15} />}>
+            تأكيد
+          </Button>
+          <Button variant="danger" startIcon={<Trash2 size={15} />}>
+            حذف
+          </Button>
+          <Button variant="warning" startIcon={<RotateCcw size={15} />}>
+            استرجاع
+          </Button>
+          <Button variant="info" startIcon={<Send size={15} />}>
+            مشاركة
+          </Button>
         </div>
       </section>
 
-      {/* Sizes */}
       <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
         <h3>الأحجام</h3>
         <div className="space-y-4">
-          {(["sm", "md", "lg"] as const).map((size) => (
+          {(
+            [
+              ["xs", "28px"],
+              ["sm", "32px"],
+              ["md", "40px"],
+              ["lg", "44px"],
+            ] as const
+          ).map(([size, px]) => (
             <div key={size} className="flex items-center gap-4">
-              <span className="text-xs text-muted-foreground w-12">{size === "sm" ? "32px" : size === "md" ? "40px" : "44px"}</span>
+              <span className="text-xs text-muted-foreground w-12">{px}</span>
               <div className="flex flex-wrap gap-3 items-center">
-                <Btn size={size} variant="primary">حفظ</Btn>
-                <Btn size={size} variant="secondary">إلغاء</Btn>
-                <Btn size={size} variant="outline">تعديل</Btn>
-                <Btn size={size} variant="ghost">عرض</Btn>
+                <Button size={size} variant="primary">
+                  حفظ
+                </Button>
+                <Button size={size} variant="secondary">
+                  إلغاء
+                </Button>
+                <Button size={size} variant="outline">
+                  تعديل
+                </Button>
+                <Button size={size} variant="ghost">
+                  عرض
+                </Button>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Icon buttons */}
       <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
         <h3>أزرار الأيقونات</h3>
         <div className="flex flex-wrap gap-3 items-center">
-          <Btn variant="primary" iconOnly icon={<Plus size={16} />} />
-          <Btn variant="secondary" iconOnly icon={<Pencil size={16} />} />
-          <Btn variant="outline" iconOnly icon={<Eye size={16} />} />
-          <Btn variant="ghost" iconOnly icon={<Printer size={16} />} />
-          <Btn variant="ghost" iconOnly icon={<Download size={16} />} />
-          <Btn variant="danger" iconOnly icon={<Trash2 size={16} />} />
-          <Btn variant="ghost" iconOnly icon={<X size={16} />} />
+          <Button variant="primary" iconOnly aria-label="إضافة" startIcon={<Plus size={16} />} />
+          <Button variant="secondary" iconOnly aria-label="تعديل" startIcon={<Pencil size={16} />} />
+          <Button variant="outline" iconOnly aria-label="عرض" startIcon={<Eye size={16} />} />
+          <Button variant="ghost" iconOnly aria-label="طباعة" startIcon={<Printer size={16} />} />
+          <Button variant="ghost" iconOnly aria-label="تصدير" startIcon={<Download size={16} />} />
+          <Button variant="danger" iconOnly aria-label="حذف" startIcon={<Trash2 size={16} />} />
+          <Button variant="ghost" iconOnly aria-label="إغلاق" startIcon={<X size={16} />} />
         </div>
       </section>
 
-      {/* With icons */}
       <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
-        <h3>مع أيقونات</h3>
+        <h3>الأزرار مع الأيقونات</h3>
         <div className="flex flex-wrap gap-3">
-          <Btn variant="primary" icon={<Plus size={15} />}>فاتورة جديدة</Btn>
-          <Btn variant="primary" icon={<Plus size={15} />}>عميل جديد</Btn>
-          <Btn variant="secondary" icon={<Printer size={15} />}>طباعة</Btn>
-          <Btn variant="outline" icon={<Download size={15} />}>تصدير</Btn>
-          <Btn variant="secondary" icon={<FileText size={15} />}>مستند جديد</Btn>
-          <Btn variant="ghost" icon={<Send size={15} />}>إرسال</Btn>
-          <Btn variant="ghost" icon={<ArrowLeft size={15} />}>رجوع</Btn>
+          <Button action="create" startIcon={<Plus size={15} />}>
+            فاتورة جديدة
+          </Button>
+          <Button action="create" startIcon={<Plus size={15} />}>
+            عميل جديد
+          </Button>
+          <Button action="print" startIcon={<Printer size={15} />}>
+            طباعة
+          </Button>
+          <Button action="export" startIcon={<Download size={15} />}>
+            تصدير
+          </Button>
+          <Button action="duplicate" startIcon={<Copy size={15} />}>
+            نسخ
+          </Button>
+          <Button action="send" startIcon={<Send size={15} />}>
+            إرسال
+          </Button>
+          <Button action="back" startIcon={<ArrowLeft size={15} />}>
+            رجوع
+          </Button>
         </div>
       </section>
 
-      {/* States */}
       <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
         <h3>الحالات</h3>
         <div className="flex flex-wrap gap-3 items-center">
-          <Btn variant="primary">عادي</Btn>
-          <Btn variant="primary" loading>جاري الحفظ...</Btn>
-          <Btn variant="primary" disabled>معطل</Btn>
-          <Btn variant="secondary" loading>جاري التحميل</Btn>
-          <Btn variant="secondary" disabled>معطل</Btn>
+          <Button variant="primary">عادي</Button>
+          <Button variant="primary" loading>
+            جاري الحفظ...
+          </Button>
+          <Button variant="primary" disabled>
+            معطل
+          </Button>
+          <Button variant="secondary" loading>
+            جاري التحميل
+          </Button>
+          <Button variant="secondary" disabled>
+            معطل
+          </Button>
+          <Button variant="success" loading={loading} onClick={() => setLoading((v) => !v)}>
+            {loading ? "إيقاف التحميل" : "تبديل التحميل"}
+          </Button>
         </div>
       </section>
 
-      {/* Split button */}
       <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
-        <h3>زر منقسم وأزرار الإجراءات</h3>
-        <div className="flex flex-wrap gap-4">
-          <div className="flex rounded-lg overflow-hidden border border-border">
-            <button className="bg-primary text-primary-foreground px-4 h-10 text-sm font-medium hover:bg-blue-700 transition-colors">
-              حفظ
-            </button>
-            <div className="w-px bg-blue-500" />
-            <button className="bg-primary text-primary-foreground px-2 h-10 hover:bg-blue-700 transition-colors">
-              <ChevronDown size={14} />
-            </button>
-          </div>
+        <h3>زر منقسم وأزرار سير العمل</h3>
+        <div className="flex flex-wrap gap-4 items-start">
+          <SplitButton
+            primary={{
+              action: "save",
+              children: "حفظ",
+            }}
+            toggleAriaLabel="فتح خيارات الحفظ"
+          />
 
           <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
-            <button className="px-3 h-8 text-sm rounded-md bg-white shadow-sm font-medium text-foreground">ترحيل</button>
-            <button className="px-3 h-8 text-sm rounded-md text-muted-foreground hover:text-foreground">مسودة</button>
-            <button className="px-3 h-8 text-sm rounded-md text-muted-foreground hover:text-foreground">إلغاء</button>
+            <Button size="sm" variant="secondary" className="bg-card shadow-sm">
+              ترحيل
+            </Button>
+            <Button size="sm" variant="ghost">
+              مسودة
+            </Button>
+            <Button size="sm" variant="ghost">
+              إلغاء
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* Common Arabic actions */}
       <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
-        <h3>إجراءات النظام الشائعة</h3>
+        <h3>إجراءات النظام المحاسبي</h3>
         <div className="grid sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">إجراءات الحفظ</p>
-            <div className="flex gap-2">
-              <Btn variant="primary" icon={<Save size={15} />}>حفظ</Btn>
-              <Btn variant="secondary">إلغاء</Btn>
-            </div>
-          </div>
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">إجراءات الفاتورة</p>
             <div className="flex flex-wrap gap-2">
-              <Btn variant="primary" icon={<Check size={15} />}>ترحيل</Btn>
-              <Btn variant="outline" icon={<Printer size={15} />}>طباعة</Btn>
-              <Btn variant="ghost" icon={<Download size={15} />}>تصدير</Btn>
+              <Button action="save" startIcon={<Save size={15} />}>
+                حفظ
+              </Button>
+              <Button action="post" startIcon={<BadgeCheck size={15} />}>
+                ترحيل
+              </Button>
+              <Button action="print" startIcon={<Printer size={15} />}>
+                طباعة
+              </Button>
+              <Button action="export" startIcon={<Download size={15} />}>
+                تصدير
+              </Button>
             </div>
           </div>
+
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">إجراءات التأكيد</p>
-            <div className="flex gap-2">
-              <Btn variant="danger" icon={<Trash2 size={15} />}>حذف</Btn>
-              <Btn variant="ghost">إلغاء</Btn>
+            <p className="text-sm text-muted-foreground">التحصيل والتسوية</p>
+            <div className="flex flex-wrap gap-2">
+              <Button action="collect" startIcon={<HandCoins size={15} />}>
+                تحصيل
+              </Button>
+              <Button action="refund" startIcon={<RotateCcw size={15} />}>
+                مرتجع
+              </Button>
+              <Button action="approve" startIcon={<Check size={15} />}>
+                اعتماد
+              </Button>
+              <Button action="reject" startIcon={<X size={15} />}>
+                رفض
+              </Button>
             </div>
           </div>
+
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">إجراءات التحرير</p>
-            <div className="flex gap-2">
-              <Btn variant="outline" icon={<Pencil size={15} />}>تعديل</Btn>
-              <Btn variant="ghost" icon={<X size={15} />}>إلغاء التعديل</Btn>
+            <p className="text-sm text-muted-foreground">عمليات المستند</p>
+            <div className="flex flex-wrap gap-2">
+              <Button action="send" startIcon={<Send size={15} />}>
+                إرسال
+              </Button>
+              <Button action="duplicate" startIcon={<Copy size={15} />}>
+                نسخ
+              </Button>
+              <Button action="archive" startIcon={<Archive size={15} />}>
+                أرشفة
+              </Button>
+              <Button action="cancel" startIcon={<X size={15} />}>
+                إلغاء
+              </Button>
             </div>
           </div>
+
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">إجراءات حساسة</p>
+            <div className="flex flex-wrap gap-2">
+              <Button action="delete" startIcon={<Trash2 size={15} />}>
+                حذف
+              </Button>
+              <Button action="edit" startIcon={<Pencil size={15} />}>
+                تعديل
+              </Button>
+              <Button action="back" startIcon={<ArrowLeft size={15} />}>
+                رجوع
+              </Button>
+              <Button variant="info" startIcon={<Wallet size={15} />}>
+                تسوية رصيد
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
+        <h3>أزرار بعرض كامل</h3>
+        <div className="grid md:grid-cols-3 gap-3">
+          <Button fullWidth action="save" startIcon={<Save size={15} />}>
+            حفظ التعديلات
+          </Button>
+          <Button fullWidth action="post" startIcon={<FileText size={15} />}>
+            ترحيل القيد
+          </Button>
+          <Button fullWidth action="send" startIcon={<Send size={15} />}>
+            إرسال كشف الحساب
+          </Button>
         </div>
       </section>
     </div>
