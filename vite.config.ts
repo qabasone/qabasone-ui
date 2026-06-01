@@ -36,7 +36,15 @@ export default defineConfig({
   build: {
   "lib": {
     "entry": [
-      "./src/index.ts"
+      "./src/index.ts",
+      "./src/ui/index.ts",
+      "./src/ui/ChartTooltips.ts",
+      "./src/ui/ConfirmModal.ts",
+      "./src/ui/ContextMenu.ts",
+      "./src/ui/EntityLink.ts",
+      "./src/ui/Pagination.ts",
+      "./src/ui/SearchableDropdowns.ts",
+      "./src/ui/Toast.ts"
     ],
     "formats": [
       "es"
