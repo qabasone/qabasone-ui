@@ -205,7 +205,7 @@ function MockContent() {
   return (
     <div className="flex-1 flex flex-col bg-background min-w-0 overflow-hidden">
       <div className="h-14 border-b border-border flex items-center gap-3 px-5 shrink-0 bg-card">
-        <Breadcrumb items={[{ label: "الرئيسية", icon: Home }, { label: "الفواتير", icon: FileText }, { label: "فاتورة #1054" }]} />
+        <Breadcrumb items={[{ label: "الرئيسية", icon: Home }, { label: "الفواتير", icon: FileText }, { label: "فاتورة #١٠٤٥" }]} />
         <div className="flex items-center gap-2 ms-auto">
           <div className="relative">
             <div className="w-8 h-8 rounded-xl border border-border flex items-center justify-center">
@@ -397,7 +397,7 @@ export function SidebarSection() {
         <div className="divide-y divide-border">
           {([
             { label: "بسيط", sep: "chevron", items: [{ label: "الرئيسية" }, { label: "العملاء" }, { label: "شركة النور للتجارة" }] },
-            { label: "مع أيقونة", sep: "chevron", items: [{ label: "الرئيسية", icon: Home }, { label: "الفواتير", icon: FileText }, { label: "فاتورة #1054" }] },
+            { label: "مع أيقونة", sep: "chevron", items: [{ label: "الرئيسية", icon: Home }, { label: "الفواتير", icon: FileText }, { label: "فاتورة #١٠٤٥" }] },
             {
               label: "مسار طويل مطوي",
               sep: "chevron",
@@ -407,7 +407,7 @@ export function SidebarSection() {
                 { label: "المبيعات" },
                 { label: "عملاء التجزئة" },
                 { label: "شركة النور" },
-                { label: "فاتورة #1054" },
+                { label: "فاتورة #١٠٤٥" },
               ],
             },
             { label: "فاصل شرطة", sep: "slash", items: [{ label: "الرئيسية" }, { label: "المشتريات" }, { label: "الموردين" }, { label: "شركة الأمل" }] },
@@ -420,7 +420,7 @@ export function SidebarSection() {
                 { label: "الرئيسية", icon: Home },
                 { label: "المبيعات", icon: TrendingDown },
                 { label: "الفواتير", icon: Receipt, badge: 5 },
-                { label: "فاتورة رقم 1054" },
+                { label: "فاتورة رقم ١٠٤٥" },
               ],
             },
           ] as Array<{ label: string; sep: BreadcrumbSep; items: BCItem[]; maxVisible?: number }>).map((row) => (
