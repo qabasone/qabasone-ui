@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Palette, Type, AlignVerticalSpaceAround, Square, MousePointer2, FormInput, Table2,
   Tag, LayoutGrid, Inbox, PanelRight, FileText, Users, LayoutDashboard,
-  ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn,
+  ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn, AlertTriangle,
 } from "lucide-react";
 import { ToastProvider } from "@/ui/components/Toast";
 import { ColorsSection } from "./components/sections/ColorsSection";
@@ -25,6 +25,7 @@ import { AmountInputsSection } from "./components/sections/AmountInputsSection";
 import { ConfirmModalSection } from "./components/sections/ConfirmModalSection";
 import { LoginSection } from "./components/sections/LoginSection";
 import { InvoiceEntrySection } from "./components/sections/InvoiceEntrySection";
+import { ErrorPagesSection } from "./components/sections/ErrorPagesSection";
 
 const sections = [
   { id: "colors", num: "01", label: "الألوان", icon: Palette, component: ColorsSection },
@@ -47,6 +48,7 @@ const sections = [
   { id: "customers", num: "15", label: "شاشات العملاء", icon: Users,        component: CustomerScreensSection },
   { id: "dashboard", num: "16",  label: "لوحة التحكم",     icon: LayoutDashboard, component: DashboardSection },
   { id: "login",     num: "17",  label: "تسجيل الدخول",   icon: LogIn,           component: LoginSection },
+  { id: "error-pages", num: "18", label: "صفحات الأخطاء", icon: AlertTriangle, component: ErrorPagesSection },
 ];
 
 export default function App() {

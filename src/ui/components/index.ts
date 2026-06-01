@@ -5,3 +5,4 @@ export * from './hooks';
 export * from './Typography';
 export * from './Button';
 export * from './SplitButton';
+export * from './ErrorPage';
