@@ -74,9 +74,9 @@
       "types": "./dist/ui/components/*.d.ts",
       "import": "./dist/ui/components/*.js"
     },
-    "./sections/*": {
-      "types": "./dist/ui/components/sections/*.d.ts",
-      "import": "./dist/ui/components/sections/*.js"
+    "./hooks/*": {
+      "types": "./dist/ui/components/hooks/*.d.ts",
+      "import": "./dist/ui/components/hooks/*.js"
     },
     "./style.css": "./dist/style.css",
     "./dist/*": {
