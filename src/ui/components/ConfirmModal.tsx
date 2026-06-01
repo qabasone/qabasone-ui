@@ -1,1 +1,1 @@
-export * from './molecules/ConfirmModal';
+export * from './organisms/ConfirmModal';

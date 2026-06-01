@@ -1,1 +1,1 @@
-export * from './molecules/ContextMenu';
+export * from './organisms/ContextMenu';
