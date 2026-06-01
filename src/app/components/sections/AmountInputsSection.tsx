@@ -293,6 +293,7 @@ export interface MoneyInputProps {
   onCurrencyChange?: (c: string) => void;
   placeholder?: string;
   label?: string;
+  required?: boolean;
   hint?: string;
   error?: string;
   disabled?: boolean;
@@ -309,6 +310,7 @@ export function MoneyInput({
   onCurrencyChange,
   placeholder = "0.00",
   label,
+  required = false,
   hint,
   error,
   disabled = false,
@@ -368,7 +370,7 @@ export function MoneyInput({
     : {};
 
   return (
-    <Field label={label} hint={hint} error={error}>
+    <Field label={label} required={required} hint={hint} error={error}>
       <div
         className={`flex items-center rounded-lg overflow-hidden transition-all ${className}`}
         style={{

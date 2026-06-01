@@ -16,7 +16,7 @@ import {
 type BreadcrumbSep = "chevron" | "slash" | "dot";
 interface BCItem {
   label: string;
-  icon?: React.ComponentType<{ size?: number; className?: string }>;
+  icon?: React.ComponentType<{ size?: string | number; className?: string }>;
   badge?: number;
   href?: string;
 }

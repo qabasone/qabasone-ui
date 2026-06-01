@@ -228,9 +228,9 @@ function UnitPopup({
         fontFamily: "var(--font-family)",
         boxShadow: "var(--shadow-popover)",
         animation: "ctx-in 0.12s cubic-bezier(0.16,1,0.3,1) both",
+        maxHeight: "300px",
       }}
       className="bg-card rounded-xl border border-border overflow-hidden flex flex-col"
-      style2={{ maxHeight: "300px" }}
     >
       <div className="p-1.5 border-b border-border shrink-0">
         <div className="relative">

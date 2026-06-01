@@ -1,7 +1,21 @@
 import { defineConfig } from 'vite'
 import path from 'path'
+import { readFileSync } from 'node:fs'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+
+const pkg = JSON.parse(
+  readFileSync(new URL('./package.json', import.meta.url), 'utf-8'),
+) as {
+  dependencies?: Record<string, string>
+  peerDependencies?: Record<string, string>
+}
+
+const external = [
+  ...Object.keys(pkg.dependencies ?? {}),
+  ...Object.keys(pkg.peerDependencies ?? {}),
+  'react/jsx-runtime',
+]
 
 export default defineConfig({
   plugins: [
@@ -30,6 +44,7 @@ export default defineConfig({
     "cssFileName": "style"
   },
   "rollupOptions": {
+    "external": external,
     "output": {
       "preserveModules": true,
       "preserveModulesRoot": "src",
