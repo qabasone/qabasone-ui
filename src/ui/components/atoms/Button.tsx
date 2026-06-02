@@ -29,7 +29,8 @@ export type AccountingButtonAction =
   | "refund"
   | "archive"
   | "duplicate"
-  | "back";
+  | "back"
+  | "view";
 
 const VARIANT_STYLES: Record<ButtonVariant, { className: string; style?: CSSProperties }> = {
   primary: { className: "bg-primary text-primary-foreground" },
@@ -65,6 +66,7 @@ const ACTION_VARIANT: Record<AccountingButtonAction, ButtonVariant> = {
   archive: "secondary",
   duplicate: "outline",
   back: "ghost",
+  view: "ghost",
 };
 
 function cx(...values: Array<string | undefined | null | false>) {
