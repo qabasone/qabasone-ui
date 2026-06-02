@@ -1,5 +1,6 @@
-import { TrendingUp, TrendingDown, AlertCircle, Users, FileText, Wallet, Clock, MoreVertical, Check, ArrowLeft } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertCircle, Users, FileText, Wallet, Clock, MoreVertical, Check, ArrowLeft, Download, RefreshCw } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { TradingSummaryCard, DocumentStatusCard, RankedList, InventoryMovementTable, WarehouseMovementSummary } from "@/ui/components";
 import { ChartTooltip, PieTooltip, SingleTooltip } from "@/ui/components/ChartTooltips";
 
 const revenueData = [
@@ -38,6 +39,18 @@ const inventoryBalance = [
   { product: "أرز أبيض", qty: "2 طن", value: "22,000 ج.م", status: "low" },
 ];
 
+const topCustomers = [
+  { id: "cust-1", label: "شركة النور", value: 92000, detail: "دفعات 24 يناير" },
+  { id: "cust-2", label: "مصنع الأهرام", value: 76000, detail: "فاتورة عاجلة" },
+  { id: "cust-3", label: "تجارة الخير", value: 58000, detail: "شراء أرز أبيض" },
+];
+
+const warehouseMovements = [
+  { id: "mov-1", date: "22/01/2024", document: "PO-2024-040", type: "وارد", quantity: 15, unit: "طن", balance: 210 },
+  { id: "mov-2", date: "23/01/2024", document: "SO-2024-014", type: "صادر", quantity: 8, unit: "طن", balance: 202 },
+  { id: "mov-3", date: "24/01/2024", document: "RT-2024-009", type: "مرتجع", quantity: 3, unit: "طن", balance: 205 },
+];
+
 function KpiCard({ title, value, sub, trend, trendVal, icon: Icon, color }: {
   title: string; value: string; sub?: string; trend?: "up" | "down"; trendVal?: string;
   icon: React.ElementType; color: string;
@@ -71,14 +84,22 @@ function KpiCard({ title, value, sub, trend, trendVal, icon: Icon, color }: {
 export function DashboardSection() {
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-foreground mb-1">لوحة التحكم</h1>
-          <p className="text-muted-foreground">يناير ٢٠٢٤ — نظرة عامة على الوضع المالي</p>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-3">
+          <span className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">نظام قبس للمحاسبة العربية</span>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-semibold text-foreground">لوحة التشغيل المالية</h1>
+            <p className="max-w-2xl text-sm text-muted-foreground">لوحة تحكم موجزة لإدارة السيولة والمخزون والمستندات المالية في تجربة عربية من اليمين إلى اليسار.</p>
+          </div>
         </div>
-        <div className="flex gap-2">
+
+        <div className="flex flex-wrap items-center gap-2">
           <button className="h-9 px-4 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors flex items-center gap-2">
-            <ArrowLeft size={14} />
+            <RefreshCw size={14} />
+            تحديث
+          </button>
+          <button className="h-9 px-4 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors flex items-center gap-2">
+            <Download size={14} />
             تصدير
           </button>
         </div>
@@ -185,7 +206,69 @@ export function DashboardSection() {
         </div>
       </div>
 
-      {/* Lower panels */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">مؤشرات القرار السريع</h2>
+          <p className="text-sm text-muted-foreground">نظرة سريعة على التداول، المستندات، وتحركات المخازن.</p>
+        </div>
+        <button className="text-xs text-primary hover:underline">عرض لوحة المراقبة</button>
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-4">
+        <TradingSummaryCard
+          title="ملخص التداول"
+          salesAmount={126000}
+          purchaseAmount={58000}
+          netAmount={68000}
+          currency="ج.م"
+          paymentType="cash"
+          subtitle="معدل التداول اليومي مع تفاصيل الدفع"
+          onDetails={() => undefined}
+          icon={<Wallet size={20} />}
+        />
+        <DocumentStatusCard
+          title="المستندات المالية"
+          documentCount={18}
+          totalAmount={132500}
+          currency="ج.م"
+          status="pending-review"
+          subtitle="فواتير ومشتريات في انتظار المراجعة"
+          onOpen={() => undefined}
+          actionLabel="فتح المستندات"
+          icon={<FileText size={20} />}
+        />
+        <WarehouseMovementSummary
+          warehouseName="مستودع القاهرة"
+          incoming={180}
+          outgoing={105}
+          net={75}
+          unit="طن"
+          statusLabel="تحرك المخزن إيجابي مع رصيد صافي متنامٍ"
+        />
+      </div>
+
+      <div className="grid lg:grid-cols-5 gap-4">
+        <div className="lg:col-span-2">
+          <RankedList
+            title="أفضل العملاء"
+            items={topCustomers}
+            currency="ج.م"
+            onItemClick={() => undefined}
+          />
+        </div>
+        <div className="lg:col-span-3">
+          <InventoryMovementTable rows={warehouseMovements} currency="ج.م" />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">تفاصيل التشغيل</h2>
+          <p className="text-sm text-muted-foreground">المتابعة اليومية على الفواتير والنشاط والمخزون.</p>
+        </div>
+        <button className="text-xs text-primary hover:underline">عرض التقارير</button>
+      </div>
+
       <div className="grid lg:grid-cols-3 gap-4">
         {/* Pending invoices */}
         <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
@@ -228,7 +311,7 @@ export function DashboardSection() {
                 >
                   {a.status === "success" ? <Check size={14} style={{ color: "#16a34a" }} />
                     : a.status === "warning" ? <Clock size={14} style={{ color: "#d97706" }} />
-                    : <FileText size={14} style={{ color: "#0284c7" }} />}
+                      : <FileText size={14} style={{ color: "#0284c7" }} />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground leading-tight">{a.text}</p>
