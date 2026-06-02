@@ -5,4 +5,5 @@ export * from './Button';
 export * from './StatusBadge';
 export * from './PermissionAware';
 export * from './DocumentStatusBadge';
+export * from './PaymentTypeBadge';
 export * from './StockQuantityDisplay';
