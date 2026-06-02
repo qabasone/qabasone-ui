@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  Palette, Type, AlignVerticalSpaceAround, Square, MousePointer2, FormInput, Table2,
+  Palette, Type, AlignVerticalSpaceAround, Square, MousePointer2, Rows3, FormInput, Table2,
   Tag, LayoutGrid, Inbox, PanelRight, FileText, Users, LayoutDashboard,
   ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn, AlertTriangle,
 } from "lucide-react";
@@ -10,6 +10,7 @@ import { TypographySection } from "./components/sections/TypographySection";
 import { SpacingSection } from "./components/sections/SpacingSection";
 import { RadiusShadowsSection } from "./components/sections/RadiusShadowsSection";
 import { ButtonsSection } from "./components/sections/ButtonsSection";
+import { TabsSection } from "./components/sections/TabsSection";
 import { InputsSection } from "./components/sections/InputsSection";
 import { TablesSection } from "./components/sections/TablesSection";
 import { BadgesSection } from "./components/sections/BadgesSection";
@@ -33,6 +34,7 @@ const sections = [
   { id: "spacing", num: "03", label: "المسافات", icon: AlignVerticalSpaceAround, component: SpacingSection },
   { id: "radius", num: "04", label: "الزوايا والظلال", icon: Square, component: RadiusShadowsSection },
   { id: "buttons", num: "05", label: "الأزرار", icon: MousePointer2, component: ButtonsSection },
+  { id: "tabs", num: "05b", label: "التبويبات", icon: Rows3, component: TabsSection },
   { id: "inputs", num: "06", label: "الحقول", icon: FormInput, component: InputsSection },
   { id: "amounts",       num: "06b", label: "المدخلات المالية",  icon: Coins,   component: AmountInputsSection },
   { id: "invoice-entry", num: "06c", label: "إدخال الفاتورة",    icon: Zap,     component: InvoiceEntrySection },
