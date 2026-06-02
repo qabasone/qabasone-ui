@@ -1,6 +1,6 @@
 {
   "name": "@qabasone/qabasone-ui",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Reusable Qabasone design system components for React applications.",
   "type": "module",
   "main": "./dist/index.js",
