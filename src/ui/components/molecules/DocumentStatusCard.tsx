@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { DocumentStatusBadge } from "../atoms/DocumentStatusBadge";
-import { Text, AmountText } from "../atoms/Typography";
+import { Text } from "../atoms/Typography";
+import { FormattedAmount } from "../atoms";
 import { Button } from "../atoms/Button";
 
 export interface DocumentStatusCardProps {
@@ -52,12 +53,7 @@ export function DocumentStatusCard({
                     <Text as="p" variant="caption" tone="muted">
                         القيمة الإجمالية
                     </Text>
-                    <AmountText value={totalAmount} currency={currency} variant="title-lg" />
-                </div>
-                <div className="rounded-3xl border border-border bg-muted p-4">
-                    <Text as="p" variant="caption" tone="muted">
-                        نوع الحالة
-                    </Text>
+                    <FormattedAmount value={totalAmount} variant="title-lg" tone="default" format="auto" showTooltip={true} />
                     <Text as="p" variant="title-lg" tone="default">
                         {status}
                     </Text>

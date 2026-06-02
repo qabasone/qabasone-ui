@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../atoms/Button";
-import { Text, AmountText } from "../atoms/Typography";
+import { Text } from "../atoms/Typography";
+import { FormattedAmount } from "../atoms";
 import type { ReactNode } from "react";
 
 export interface CashBalanceCardProps {
@@ -41,7 +42,7 @@ export function CashBalanceCard({
                         {title}
                     </Text>
                     <div className="mt-2 flex items-center gap-2">
-                        <AmountText value={balance} currency={currency} currencyPosition="suffix" variant="display-2xl" tone={status === "negative" ? "error" : "default"} />
+                        <FormattedAmount value={balance} variant="display-2xl" tone={status === "negative" ? "error" : "default"} format="auto" showTooltip={true} />
                     </div>
                     {subtitle ? (
                         <Text as="p" variant="body-sm" tone="muted" className="mt-2">

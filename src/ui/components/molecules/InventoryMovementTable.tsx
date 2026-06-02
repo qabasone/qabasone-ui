@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from "react";
-import { Text, AmountText } from "../atoms/Typography";
+import { Text } from "../atoms/Typography";
+import { FormattedQuantity, FormattedAmount } from "../atoms";
 
 export interface InventoryMovementRow {
     id: string;
@@ -51,12 +52,16 @@ export function InventoryMovementTable({ rows, currency, emptyLabel = "لا يو
                                     <td className="px-4 py-3">{row.type}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex flex-col items-end">
-                                            <AmountText value={row.quantity} currency={row.unit} variant="body-sm" />
+                                            {['كيلو', 'طن', 'أردب صغير', 'أردب كبير', 'عبوة', 'كيس'].includes(row.unit) ? (
+                                                <FormattedQuantity value={row.quantity} unit={row.unit as any} variant="body-sm" />
+                                            ) : (
+                                                <Text as="span" variant="body-sm" tone="default">{row.quantity} {row.unit}</Text>
+                                            )}
                                         </div>
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex flex-col items-end">
-                                            <AmountText value={row.balance} currency={currency} variant="body-sm" />
+                                            <FormattedAmount value={row.balance} format="auto" showTooltip={true} />
                                         </div>
                                     </td>
                                 </tr>

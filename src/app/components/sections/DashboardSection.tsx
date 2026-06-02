@@ -1,7 +1,8 @@
 import { TrendingUp, TrendingDown, AlertCircle, Users, FileText, Wallet, Clock, MoreVertical, Check, ArrowLeft, Download, RefreshCw } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { TradingSummaryCard, DocumentStatusCard, RankedList, InventoryMovementTable, WarehouseMovementSummary } from "@/ui/components";
+import { TradingSummaryCard, DocumentStatusCard, RankedList, InventoryMovementTable, WarehouseMovementSummary, FormattedAmount, FormattedQuantity } from "@/ui/components";
 import { ChartTooltip, PieTooltip, SingleTooltip } from "@/ui/components/ChartTooltips";
+import { formatAmount } from "@/ui/utils";
 
 const revenueData = [
   { month: "يول", revenue: 180000, expenses: 110000 },
@@ -51,8 +52,8 @@ const warehouseMovements = [
   { id: "mov-3", date: "24/01/2024", document: "RT-2024-009", type: "مرتجع", quantity: 3, unit: "طن", balance: 205 },
 ];
 
-function KpiCard({ title, value, sub, trend, trendVal, icon: Icon, color }: {
-  title: string; value: string; sub?: string; trend?: "up" | "down"; trendVal?: string;
+function KpiCard({ title, value = "", rawValue, sub, trend, trendVal, icon: Icon, color }: {
+  title: string; value?: string; rawValue?: number; sub?: string; trend?: "up" | "down"; trendVal?: string;
   icon: React.ElementType; color: string;
 }) {
   return (
@@ -67,7 +68,11 @@ function KpiCard({ title, value, sub, trend, trendVal, icon: Icon, color }: {
       </div>
       <div>
         <p className="text-sm text-muted-foreground">{title}</p>
-        <p className="text-2xl font-bold text-foreground amount mt-1">{value}</p>
+        {rawValue !== undefined ? (
+          <FormattedAmount value={rawValue} variant="title-xl" tone="default" format="auto" className="mt-1" />
+        ) : (
+          <p className="text-2xl font-bold text-foreground amount mt-1">{value}</p>
+        )}
         {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
       </div>
       {trend && trendVal && (
@@ -107,18 +112,18 @@ export function DashboardSection() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard title="إجمالي الإيرادات" value="248,500 ج.م" sub="يناير 2024" trend="up" trendVal="+12.5%" icon={TrendingUp} color="#2563eb" />
-        <KpiCard title="إجمالي المصروفات" value="142,300 ج.م" sub="يناير 2024" trend="up" trendVal="+8.2%" icon={TrendingDown} color="#dc2626" />
-        <KpiCard title="صافي الربح" value="106,200 ج.م" sub="هامش 42.7%" trend="up" trendVal="+18.1%" icon={TrendingUp} color="#16a34a" />
-        <KpiCard title="فواتير معلقة" value="34,750 ج.م" sub="5 فواتير" trend="down" trendVal="-3.4%" icon={AlertCircle} color="#d97706" />
+        <KpiCard title="إجمالي الإيرادات" rawValue={248500} sub="يناير 2024" trend="up" trendVal="+12.5%" icon={TrendingUp} color="#2563eb" />
+        <KpiCard title="إجمالي المصروفات" rawValue={142300} sub="يناير 2024" trend="up" trendVal="+8.2%" icon={TrendingDown} color="#dc2626" />
+        <KpiCard title="صافي الربح" rawValue={106200} sub="هامش 42.7%" trend="up" trendVal="+18.1%" icon={TrendingUp} color="#16a34a" />
+        <KpiCard title="فواتير معلقة" rawValue={34750} sub="5 فواتير" trend="down" trendVal="-3.4%" icon={AlertCircle} color="#d97706" />
       </div>
 
       {/* Secondary KPIs */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "أرصدة الخزن", value: "85,430 ج.م", icon: Wallet, color: "#0284c7" },
-          { label: "العهد المفتوحة", value: "12,500 ج.م", icon: Clock, color: "#7c3aed" },
-          { label: "العملاء النشطون", value: "48 عميل", icon: Users, color: "#16a34a" },
+          { label: "أرصدة الخزن", rawValue: 85430, isAmount: true, icon: Wallet, color: "#0284c7" },
+          { label: "العهد المفتوحة", rawValue: 12500, isAmount: true, icon: Clock, color: "#7c3aed" },
+          { label: "العملاء النشطون", value: "48 عميل", isAmount: false, icon: Users, color: "#16a34a" },
         ].map((s) => (
           <div key={s.label} className="bg-card rounded-2xl border border-border p-4 shadow-sm flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${s.color}18` }}>
@@ -126,7 +131,11 @@ export function DashboardSection() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">{s.label}</p>
-              <p className="font-bold text-foreground amount">{s.value}</p>
+              {s.isAmount ? (
+                <FormattedAmount value={(s as any).rawValue} variant="title-lg" tone="default" format="auto" />
+              ) : (
+                <p className="font-bold text-foreground amount">{s.value}</p>
+              )}
             </div>
           </div>
         ))}
@@ -159,11 +168,11 @@ export function DashboardSection() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} />
+              <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={(v) => formatAmount(v, { format: 'auto' }).display.split(' ')[0]} />
               <Tooltip content={
                 <ChartTooltip
                   seriesLabels={{ revenue: "الإيرادات", expenses: "المصروفات" }}
-                  valueFormatter={(v) => `${(v / 1000).toFixed(0)}K ج.م`}
+                  valueFormatter={(v) => formatAmount(v, { format: 'auto' }).display}
                 />
               } />
               <Area type="monotone" dataKey="revenue" stroke="#2563eb" strokeWidth={2} fill="url(#dash-grad-revenue)" />
@@ -187,7 +196,7 @@ export function DashboardSection() {
               <Tooltip content={
                 <PieTooltip
                   total={expenseBreakdown.reduce((s, i) => s + i.value, 0)}
-                  valueFormatter={(v) => `${(v / 1000).toFixed(0)}K ج.م`}
+                  valueFormatter={(v) => formatAmount(v, { format: 'auto' }).display}
                 />
               } />
             </PieChart>
@@ -199,7 +208,7 @@ export function DashboardSection() {
                   <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
                   {item.name}
                 </span>
-                <span className="font-medium text-foreground amount">{(item.value / 1000).toFixed(0)}K</span>
+                <FormattedAmount value={item.value} variant="body-sm" tone="default" format="auto" showTooltip={true} />
               </div>
             ))}
           </div>
@@ -285,7 +294,7 @@ export function DashboardSection() {
                   <p className="text-xs text-muted-foreground mt-0.5 amount">استحقاق: {inv.due}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-sm font-semibold text-foreground amount">{inv.amount}</p>
+                  <FormattedAmount value={parseFloat(inv.amount)} variant="body-sm" tone="default" format="auto" showTooltip={true} />
                   <p className="text-xs mt-0.5" style={{ color: inv.overdue ? "var(--destructive)" : "var(--warning)" }}>
                     {inv.overdue ? "متأخرة" : "في الانتظار"}
                   </p>
@@ -337,7 +346,7 @@ export function DashboardSection() {
                   <p className="text-xs text-muted-foreground amount mt-0.5">{item.qty}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-foreground amount">{item.value}</p>
+                  <FormattedAmount value={parseFloat(item.value.replace(/,/g, "").replace(" ج.م", ""))} variant="body-sm" tone="default" format="auto" showTooltip={true} />
                   <span
                     className="text-xs px-2 py-0.5 rounded-full font-medium"
                     style={
@@ -361,7 +370,7 @@ export function DashboardSection() {
                 <Tooltip content={
                   <SingleTooltip
                     seriesLabel="القيمة"
-                    valueFormatter={(v) => `${(v / 1000).toFixed(0)}K ج.م`}
+                    valueFormatter={(v) => formatAmount(v, { format: 'auto' }).display}
                   />
                 } />
                 <Bar dataKey="value" fill="#2563eb" radius={[4, 4, 0, 0]} opacity={0.8} />

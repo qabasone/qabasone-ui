@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { Text, AmountText } from "../atoms/Typography";
+import { Text } from "../atoms/Typography";
+import { FormattedAmount } from "../atoms";
 
 export interface RankedListItem {
     id: string;
@@ -59,7 +60,7 @@ export function RankedList({ title, items, currency, emptyLabel = "لا يوجد
                                         ) : null}
                                     </div>
                                 </div>
-                                <AmountText value={item.value} currency={currency} variant="body-lg" tone="default" />
+                                <FormattedAmount value={item.value} variant="body-lg" tone="default" format="auto" showTooltip={true} />
                             </div>
                         </button>
                     ))}

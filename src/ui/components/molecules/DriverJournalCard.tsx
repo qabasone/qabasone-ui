@@ -1,7 +1,8 @@
 import { ArrowRight, CheckCircle2, Clock3, ShieldCheck } from "lucide-react";
 import { Button } from "../atoms/Button";
 import { StatusBadge } from "../atoms/StatusBadge";
-import { Text, AmountText } from "../atoms/Typography";
+import { Text } from "../atoms/Typography";
+import { FormattedAmount } from "../atoms";
 import type { ReactNode } from "react";
 
 export type DriverJournalStatus = "open" | "pending-review" | "reviewed" | "settled" | "discrepancy";
@@ -71,13 +72,13 @@ export function DriverJournalCard({
                     <Text as="p" variant="caption" tone="muted">
                         المبيعات
                     </Text>
-                    <AmountText value={totalSales} currency={currency} variant="title-lg" />
+                    <FormattedAmount value={totalSales} variant="title-lg" tone="default" format="auto" showTooltip={true} />
                 </div>
                 <div className="rounded-3xl border border-border bg-muted p-4">
                     <Text as="p" variant="caption" tone="muted">
                         المشتريات
                     </Text>
-                    <AmountText value={totalPurchases} currency={currency} variant="title-lg" />
+                    <FormattedAmount value={totalPurchases} variant="title-lg" tone="default" format="auto" showTooltip={true} />
                 </div>
             </div>
 
@@ -88,7 +89,7 @@ export function DriverJournalCard({
                             <Text as="p" variant="caption" tone="muted">
                                 المتوقع
                             </Text>
-                            <AmountText value={expectedBalance} currency={currency} variant="title-lg" />
+                            <FormattedAmount value={expectedBalance} variant="title-lg" tone="default" format="auto" showTooltip={true} />
                         </div>
                     ) : null}
                     {actualBalance !== undefined ? (
@@ -96,7 +97,7 @@ export function DriverJournalCard({
                             <Text as="p" variant="caption" tone="muted">
                                 الفعلي
                             </Text>
-                            <AmountText value={actualBalance} currency={currency} variant="title-lg" />
+                            <FormattedAmount value={actualBalance} variant="title-lg" tone="default" format="auto" showTooltip={true} />
                         </div>
                     ) : null}
                 </div>

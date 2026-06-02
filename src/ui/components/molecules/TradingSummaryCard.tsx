@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { ArrowDownRight, ArrowUpRight, BalanceScale, CircleDashed } from "lucide-react";
-import { AmountText, Text } from "../atoms/Typography";
+import { ArrowDownRight, ArrowUpRight, Scale, CircleDashed } from "lucide-react";
+import { Text } from "../atoms/Typography";
+import { FormattedAmount } from "../atoms";
 import { Button } from "../atoms/Button";
 
 export interface TradingSummaryCardProps {
@@ -40,7 +41,7 @@ export function TradingSummaryCard({
                         {title}
                     </Text>
                     <div className="mt-2 flex items-center gap-2">
-                        {icon ? <div className="text-primary">{icon}</div> : <BalanceScale size={20} className="text-primary" />}
+                        {icon ? <div className="text-primary">{icon}</div> : <Scale size={20} className="text-primary" />}
                         <Text as="p" variant="title-xl" tone="default">
                             {paymentType ? `${paymentType}` : "ملخص"}
                         </Text>
@@ -53,19 +54,19 @@ export function TradingSummaryCard({
                     <Text as="p" variant="caption" tone="muted">
                         مبيعات اليوم
                     </Text>
-                    <AmountText value={salesAmount} currency={currency} variant="title-lg" />
+                    <FormattedAmount value={salesAmount} variant="title-lg" tone="default" format="auto" showTooltip={true} />
                 </div>
                 <div className="rounded-3xl border border-border bg-muted p-4">
                     <Text as="p" variant="caption" tone="muted">
                         مشتريات اليوم
                     </Text>
-                    <AmountText value={purchaseAmount} currency={currency} variant="title-lg" />
+                    <FormattedAmount value={purchaseAmount} variant="title-lg" tone="default" format="auto" showTooltip={true} />
                 </div>
                 <div className="rounded-3xl border border-border bg-muted p-4">
                     <Text as="p" variant="caption" tone="muted">
                         الصافي
                     </Text>
-                    <AmountText value={netAmount} currency={currency} variant="title-lg" tone={netAmount >= 0 ? "default" : "error"} />
+                    <FormattedAmount value={netAmount} variant="title-lg" tone={netAmount >= 0 ? "default" : "error"} format="auto" showTooltip={true} />
                 </div>
             </div>
 

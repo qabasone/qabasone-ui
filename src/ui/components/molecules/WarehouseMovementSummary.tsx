@@ -1,4 +1,5 @@
-import { Text, AmountText } from "../atoms/Typography";
+import { Text } from "../atoms/Typography";
+import { FormattedQuantity } from "../atoms";
 import type { ReactNode } from "react";
 
 export interface WarehouseMovementSummaryProps {
@@ -43,19 +44,19 @@ export function WarehouseMovementSummary({
                     <Text as="p" variant="caption" tone="muted">
                         الداخل
                     </Text>
-                    <AmountText value={incoming} currency={unit} variant="title-lg" />
+                    <FormattedQuantity value={incoming} unit={unit as any} variant="title-lg" autoConvert={true} />
                 </div>
                 <div className="rounded-3xl border border-border bg-muted p-4">
                     <Text as="p" variant="caption" tone="muted">
                         الخارج
                     </Text>
-                    <AmountText value={outgoing} currency={unit} variant="title-lg" />
+                    <FormattedQuantity value={outgoing} unit={unit as any} variant="title-lg" autoConvert={true} />
                 </div>
                 <div className="rounded-3xl border border-border bg-muted p-4">
                     <Text as="p" variant="caption" tone="muted">
                         الصافي
                     </Text>
-                    <AmountText value={net} currency={unit} variant="title-lg" tone={net >= 0 ? "default" : "error"} />
+                    <FormattedQuantity value={net} unit={unit as any} variant="title-lg" autoConvert={true} />
                 </div>
             </div>
 

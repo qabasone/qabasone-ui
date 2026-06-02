@@ -8,3 +8,5 @@ export * from './SplitButton';
 export * from './Tabs';
 export * from './ErrorPage';
 export * from './LoginAuth';
+export * from '../utils';
+export * from '../config';

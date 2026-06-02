@@ -7,3 +7,5 @@ export * from './PermissionAware';
 export * from './DocumentStatusBadge';
 export * from './PaymentTypeBadge';
 export * from './StockQuantityDisplay';
+export * from './FormattedAmount';
+export * from './FormattedQuantity';
