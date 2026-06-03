@@ -277,6 +277,198 @@
     background: var(--info-muted);
     color: var(--info);
   }
+
+  .qbs-loader-mark {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    color: var(--qbs-loader-color, var(--primary));
+    isolation: isolate;
+    flex-shrink: 0;
+  }
+
+  .qbs-loader-mark[data-size="sm"] {
+    width: 30px;
+    height: 30px;
+  }
+
+  .qbs-loader-mark[data-size="lg"] {
+    width: 58px;
+    height: 58px;
+  }
+
+  .qbs-loader-mark-core {
+    position: absolute;
+    inset: 9px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    background:
+      linear-gradient(145deg, color-mix(in srgb, var(--qbs-loader-color, var(--primary)) 92%, white), var(--qbs-loader-color, var(--primary)));
+    color: var(--primary-foreground);
+    font-size: 15px;
+    font-weight: 800;
+    box-shadow:
+      0 10px 24px color-mix(in srgb, var(--qbs-loader-color, var(--primary)) 22%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.26);
+    animation: qbs-loader-core-pulse 1.6s ease-in-out infinite;
+  }
+
+  .qbs-loader-mark[data-size="sm"] .qbs-loader-mark-core {
+    inset: 6px;
+    border-radius: 8px;
+    font-size: 11px;
+  }
+
+  .qbs-loader-mark[data-size="lg"] .qbs-loader-mark-core {
+    inset: 12px;
+    border-radius: 15px;
+    font-size: 21px;
+  }
+
+  .qbs-loader-orbit {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    border: 1.5px solid color-mix(in srgb, var(--qbs-loader-color, var(--primary)) 18%, transparent);
+    border-inline-start-color: var(--qbs-loader-color, var(--primary));
+    transform-origin: center;
+  }
+
+  .qbs-loader-orbit-main {
+    animation: qbs-loader-orbit 1.15s linear infinite;
+  }
+
+  .qbs-loader-orbit-soft {
+    inset: 5px;
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--qbs-loader-color, var(--primary)) 30%, transparent);
+    border-block-start-color: transparent;
+    animation: qbs-loader-orbit 1.9s linear infinite reverse;
+  }
+
+  .qbs-loader-ledger {
+    position: absolute;
+    inset-inline-end: 1px;
+    inset-block-end: 2px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: end;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 999px;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--border);
+  }
+
+  .qbs-loader-ledger span {
+    display: block;
+    width: 3px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--qbs-loader-color, var(--primary));
+    animation: qbs-loader-ledger-bar 1s ease-in-out infinite;
+  }
+
+  .qbs-loader-ledger span:nth-child(2) {
+    animation-delay: 0.16s;
+  }
+
+  .qbs-loader-ledger span:nth-child(3) {
+    animation-delay: 0.32s;
+  }
+
+  .qbs-loading-rail {
+    position: relative;
+    height: 4px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--qbs-loader-soft, var(--primary-muted));
+  }
+
+  .qbs-loading-rail::after {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: -40%;
+    width: 42%;
+    border-radius: inherit;
+    background:
+      linear-gradient(90deg, transparent, var(--qbs-loader-color, var(--primary)), transparent);
+    content: "";
+    animation: qbs-loader-rail 1.35s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  .qbs-skeleton-line {
+    position: relative;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--muted) 82%, var(--card));
+  }
+
+  .qbs-skeleton-line::after {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: -55%;
+    width: 45%;
+    background:
+      linear-gradient(90deg, transparent, color-mix(in srgb, var(--qbs-loader-color, var(--primary)) 16%, white), transparent);
+    content: "";
+    animation: qbs-loader-skeleton 1.55s ease-in-out infinite;
+  }
+}
+
+@keyframes qbs-loader-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes qbs-loader-core-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.94);
+  }
+}
+
+@keyframes qbs-loader-ledger-bar {
+  0%,
+  100% {
+    height: 5px;
+    opacity: 0.55;
+  }
+  50% {
+    height: 12px;
+    opacity: 1;
+  }
+}
+
+@keyframes qbs-loader-rail {
+  to {
+    inset-inline-start: 105%;
+  }
+}
+
+@keyframes qbs-loader-skeleton {
+  to {
+    inset-inline-start: 110%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qbs-loader-orbit,
+  .qbs-loader-mark-core,
+  .qbs-loader-ledger span,
+  .qbs-loading-rail::after,
+  .qbs-skeleton-line::after {
+    animation: none;
+  }
 }
 
 /* ── Toast animations ───────────────────────────── */

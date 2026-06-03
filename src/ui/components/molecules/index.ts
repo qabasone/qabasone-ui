@@ -8,6 +8,7 @@ export * from './TableFilters';
 export * from './DataTable';
 export * from './RowEditDialog';
 export * from './PopupForm';
+export * from './BrandLoader';
 export * from './SummaryCard';
 export * from './PeriodFilter';
 export * from './AlertPanel';

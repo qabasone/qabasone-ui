@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Palette, Type, AlignVerticalSpaceAround, Square, MousePointer2, Rows3, FormInput, Table2,
   Tag, LayoutGrid, Inbox, PanelRight, FileText, Users, LayoutDashboard,
-  ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn, AlertTriangle, ChevronDown, ShieldCheck, CalendarDays, BookOpen, PanelsTopLeft,
+  ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn, AlertTriangle, ChevronDown, ShieldCheck, CalendarDays, BookOpen, PanelsTopLeft, LoaderCircle,
 } from "lucide-react";
 import { ToastProvider } from "@/ui/components/Toast";
 import { ColorsSection } from "./components/sections/ColorsSection";
@@ -23,6 +23,7 @@ import { DashboardSection } from "./components/sections/DashboardSection";
 import { AlertsSection } from "./components/sections/AlertsSection";
 import { FormsSection } from "./components/sections/FormsSection";
 import { PopupFormsSection } from "./components/sections/PopupFormsSection";
+import { LoadersSection } from "./components/sections/LoadersSection";
 import { AmountInputsSection } from "./components/sections/AmountInputsSection";
 import { ConfirmModalSection } from "./components/sections/ConfirmModalSection";
 import { LoginSection } from "./components/sections/LoginSection";
@@ -57,6 +58,7 @@ const sectionGroups = [
       { id: "badges", num: "08", label: "الشارات", icon: Tag, component: BadgesSection },
       { id: "cards", num: "09", label: "البطاقات", icon: LayoutGrid, component: CardsSection },
       { id: "empty", num: "10", label: "الحالات الفارغة", icon: Inbox, component: EmptyStatesSection },
+      { id: "loaders", num: "10b", label: "اللودرز", icon: LoaderCircle, component: LoadersSection },
       { id: "alerts", num: "11", label: "التنبيهات", icon: BellRing, component: AlertsSection },
       { id: "confirm", num: "11b", label: "نوافذ التأكيد", icon: MessageSquareWarning, component: ConfirmModalSection },
       { id: "forms", num: "12", label: "النماذج", icon: ClipboardList, component: FormsSection },
