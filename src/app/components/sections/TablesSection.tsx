@@ -30,7 +30,15 @@ import {
   type ContextMenuTriggerProps,
 } from "@/ui/components/ContextMenu";
 import { EntityLink } from "@/ui/components/EntityLink";
-import { DataTable, TableFilterBar, type DataTableColumn, type TableFilterDefinition, type TableFilterValue } from "@/ui/components";
+import {
+  DataTable,
+  RowEditDialog,
+  TableFilterBar,
+  type DataTableColumn,
+  type RowEditField,
+  type TableFilterDefinition,
+  type TableFilterValue,
+} from "@/ui/components";
 import { applyTableFilters, countOptions } from "@/ui/utils";
 
 // ── Sample data (30 rows so pagination is meaningful) ─────────────────────────
@@ -385,6 +393,18 @@ const COLS = [
 
 type InvoiceColumnKey = (typeof COLS)[number]["key"];
 type InvoiceColumn = (typeof COLS)[number];
+type InvoiceRow = (typeof ALL_INVOICES)[number];
+
+interface InvoiceEditValues {
+  id: string;
+  customer: string;
+  product: string;
+  qty: string;
+  amount: string;
+  date: string;
+  status: string;
+  notes: string;
+}
 
 function TableHead({
   sortCol,
@@ -629,6 +649,7 @@ export function TablesSection() {
     () => COLS.map((col) => col.key)
   );
   const [selected1, setSelected1] = useState<string[]>([]);
+  const [editingInvoice, setEditingInvoice] = useState<InvoiceEditValues | null>(null);
   const [sortCol1, setSortCol1] = useState("date");
   const [sortDir1, setSortDir1] = useState<"asc" | "desc">(
     "desc",
@@ -765,6 +786,40 @@ export function TablesSection() {
         { id: "clear-selection", label: "إلغاء التحديد", icon: X, onClick: () => setSelected1([]) },
       ],
     },
+  ];
+
+  const toInvoiceEditValues = (invoice: InvoiceRow): InvoiceEditValues => ({
+    id: invoice.id,
+    customer: invoice.customer,
+    product: invoice.product,
+    qty: invoice.qty,
+    amount: invoice.amount,
+    date: invoice.date,
+    status: invoice.status,
+    notes: "",
+  });
+
+  const invoiceEditFields: RowEditField<InvoiceEditValues>[] = [
+    { id: "id", label: "رقم الفاتورة", type: "readonly" },
+    { id: "customer", label: "العميل", type: "text", required: true, placeholder: "اسم العميل" },
+    {
+      id: "product",
+      label: "المنتج",
+      type: "select",
+      required: true,
+      options: Object.keys(productCounts).map((product) => ({ value: product, label: product })),
+    },
+    { id: "qty", label: "الكمية", type: "text", inputMode: "decimal", required: true },
+    { id: "amount", label: "الإجمالي", type: "text", inputMode: "decimal", required: true },
+    { id: "date", label: "التاريخ", type: "text", required: true, description: "صيغة العرض الحالية داخل الجدول." },
+    {
+      id: "status",
+      label: "الحالة",
+      type: "select",
+      required: true,
+      options: Object.entries(statusMap).map(([value, status]) => ({ value, label: status.label })),
+    },
+    { id: "notes", label: "ملاحظات", type: "textarea", fullWidth: true, placeholder: "ملاحظة داخلية اختيارية..." },
   ];
 
   // ── Table 2: pagination at top ──────────────────────────────────────────────
@@ -926,7 +981,29 @@ export function TablesSection() {
           ),
         }}
         rowActions={(inv) => (
-          <ContextMenuTrigger groups={invoiceMenuGroups(inv)}>
+          <ContextMenuTrigger
+            groups={[
+              {
+                items: [
+                  { id: "view", label: "عرض التفاصيل", icon: Eye, onClick: () => { } },
+                  {
+                    id: "edit",
+                    label: "تعديل الفاتورة",
+                    icon: Pencil,
+                    shortcut: "E",
+                    onClick: () => setEditingInvoice(toInvoiceEditValues(inv)),
+                  },
+                  { id: "copy", label: "نسخ رقم الفاتورة", icon: Copy, shortcut: "Ctrl+C", onClick: () => { } },
+                ],
+              },
+              {
+                items: [
+                  { id: "archive", label: "أرشفة", icon: Archive, onClick: () => { } },
+                  { id: "delete", label: "حذف الفاتورة", icon: Trash2, variant: "danger", shortcut: "Del", onClick: () => { } },
+                ],
+              },
+            ]}
+          >
             <button
               className="qbs-focus flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted"
               aria-label={`إجراءات ${inv.id}`}
@@ -951,6 +1028,24 @@ export function TablesSection() {
         )}
       />
 
+      {editingInvoice ? (
+        <RowEditDialog<InvoiceEditValues>
+          open={Boolean(editingInvoice)}
+          title={`تعديل ${editingInvoice.id}`}
+          description="عدّل بيانات الصف بسرعة دون مغادرة الجدول."
+          values={editingInvoice}
+          fields={invoiceEditFields}
+          onChange={setEditingInvoice}
+          onCancel={() => setEditingInvoice(null)}
+          onSubmit={() => setEditingInvoice(null)}
+          labels={{
+            save: "حفظ الفاتورة",
+            cancel: "إلغاء",
+            close: "إغلاق نافذة تعديل الصف",
+          }}
+        />
+      ) : null}
+
       <section className="qbs-surface overflow-hidden">
         <div className="border-b border-border px-5 py-3">
           <p className="text-sm font-semibold text-foreground">استخدام DataTable</p>
@@ -974,6 +1069,30 @@ export function TablesSection() {
   selection={{ selectedIds, onChange: setSelectedIds, bulkActions }}
   rowActions={(row) => <RowActions row={row} />}
   footer={<Pagination total={total} page={page} pageSize={pageSize} />}/>`}</pre>
+      </section>
+
+      <section className="qbs-surface overflow-hidden">
+        <div className="border-b border-border px-5 py-3">
+          <p className="text-sm font-semibold text-foreground">استخدام RowEditDialog</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            نموذج سريع لتعديل صف من الجدول بدون مغادرة السياق.
+          </p>
+        </div>
+        <pre className="overflow-x-auto bg-muted/20 p-5 text-xs leading-relaxed text-foreground" dir="ltr">{`const fields = [
+  { id: "customer", label: "العميل", type: "text", required: true },
+  { id: "status", label: "الحالة", type: "select", options: statusOptions },
+  { id: "notes", label: "ملاحظات", type: "textarea", fullWidth: true },
+];
+
+<RowEditDialog
+  open={Boolean(editingRow)}
+  title={\`تعديل \${editingRow?.id}\`}
+  values={editingRow}
+  fields={fields}
+  onChange={setEditingRow}
+  onCancel={() => setEditingRow(null)}
+  onSubmit={(values) => saveRow(values)}
+/>`}</pre>
       </section>
 
       <div>

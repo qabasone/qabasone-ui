@@ -6,6 +6,8 @@ export * from './SplitButton';
 export * from './Tabs';
 export * from './TableFilters';
 export * from './DataTable';
+export * from './RowEditDialog';
+export * from './PopupForm';
 export * from './SummaryCard';
 export * from './PeriodFilter';
 export * from './AlertPanel';

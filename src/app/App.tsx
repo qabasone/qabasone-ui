@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Palette, Type, AlignVerticalSpaceAround, Square, MousePointer2, Rows3, FormInput, Table2,
   Tag, LayoutGrid, Inbox, PanelRight, FileText, Users, LayoutDashboard,
-  ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn, AlertTriangle, ChevronDown, ShieldCheck, CalendarDays, BookOpen,
+  ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn, AlertTriangle, ChevronDown, ShieldCheck, CalendarDays, BookOpen, PanelsTopLeft,
 } from "lucide-react";
 import { ToastProvider } from "@/ui/components/Toast";
 import { ColorsSection } from "./components/sections/ColorsSection";
@@ -22,6 +22,7 @@ import { CustomerScreensSection } from "./components/sections/CustomerScreensSec
 import { DashboardSection } from "./components/sections/DashboardSection";
 import { AlertsSection } from "./components/sections/AlertsSection";
 import { FormsSection } from "./components/sections/FormsSection";
+import { PopupFormsSection } from "./components/sections/PopupFormsSection";
 import { AmountInputsSection } from "./components/sections/AmountInputsSection";
 import { ConfirmModalSection } from "./components/sections/ConfirmModalSection";
 import { LoginSection } from "./components/sections/LoginSection";
@@ -59,6 +60,7 @@ const sectionGroups = [
       { id: "alerts", num: "11", label: "التنبيهات", icon: BellRing, component: AlertsSection },
       { id: "confirm", num: "11b", label: "نوافذ التأكيد", icon: MessageSquareWarning, component: ConfirmModalSection },
       { id: "forms", num: "12", label: "النماذج", icon: ClipboardList, component: FormsSection },
+      { id: "popup-forms", num: "12b", label: "نماذج Popup", icon: PanelsTopLeft, component: PopupFormsSection },
       { id: "sidebar", num: "13", label: "الشريط الجانبي", icon: PanelRight, component: SidebarSection },
     ],
   },
