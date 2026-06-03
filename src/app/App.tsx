@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Palette, Type, AlignVerticalSpaceAround, Square, MousePointer2, Rows3, FormInput, Table2,
   Tag, LayoutGrid, Inbox, PanelRight, FileText, Users, LayoutDashboard,
-  ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn, AlertTriangle, ChevronDown,
+  ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn, AlertTriangle, ChevronDown, ShieldCheck,
 } from "lucide-react";
 import { ToastProvider } from "@/ui/components/Toast";
 import { ColorsSection } from "./components/sections/ColorsSection";
@@ -27,6 +27,8 @@ import { ConfirmModalSection } from "./components/sections/ConfirmModalSection";
 import { LoginSection } from "./components/sections/LoginSection";
 import { InvoiceEntrySection } from "./components/sections/InvoiceEntrySection";
 import { ErrorPagesSection } from "./components/sections/ErrorPagesSection";
+import { SystemReadinessSection } from "./components/sections/SystemReadinessSection";
+import { OperationalAlertsSection } from "./components/sections/OperationalAlertsSection";
 
 const sectionGroups = [
   {
@@ -65,8 +67,10 @@ const sectionGroups = [
       { id: "invoices", num: "14", label: "شاشات الفواتير", icon: FileText, component: InvoiceScreensSection },
       { id: "customers", num: "15", label: "شاشات العملاء", icon: Users, component: CustomerScreensSection },
       { id: "dashboard", num: "16", label: "لوحة التحكم", icon: LayoutDashboard, component: DashboardSection },
-      { id: "login", num: "17", label: "تسجيل الدخول", icon: LogIn, component: LoginSection },
-      { id: "error-pages", num: "18", label: "صفحات الأخطاء", icon: AlertTriangle, component: ErrorPagesSection },
+      { id: "system-readiness", num: "17", label: "جاهزية التشغيل", icon: ShieldCheck, component: SystemReadinessSection },
+      { id: "operational-alerts", num: "18", label: "مركز التنبيهات", icon: BellRing, component: OperationalAlertsSection },
+      { id: "login", num: "19", label: "تسجيل الدخول", icon: LogIn, component: LoginSection },
+      { id: "error-pages", num: "20", label: "صفحات الأخطاء", icon: AlertTriangle, component: ErrorPagesSection },
     ],
   },
 ];
