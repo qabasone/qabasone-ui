@@ -19,16 +19,10 @@ export function SidebarIconButton({
     <button
       title={label}
       onClick={onClick}
-      className="relative w-10 h-10 rounded-xl flex items-center justify-center transition-all group"
+      className="qbs-focus relative w-10 h-10 rounded-lg flex items-center justify-center transition-all hover:bg-muted group"
       style={{
         backgroundColor: active ? "var(--primary-muted)" : "transparent",
         color: active ? "var(--primary)" : "var(--muted-foreground)",
-      }}
-      onMouseEnter={(e) => {
-        if (!active) (e.currentTarget as HTMLElement).style.backgroundColor = "var(--muted)";
-      }}
-      onMouseLeave={(e) => {
-        if (!active) (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
       }}
     >
       <Icon size={17} />

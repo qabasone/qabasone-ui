@@ -191,6 +191,94 @@
   }
 }
 
+@layer components {
+  .qbs-surface {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .qbs-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--card);
+    box-shadow: var(--shadow-popover);
+  }
+
+  .qbs-focus {
+    outline: none;
+  }
+
+  .qbs-focus:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+  }
+
+  .qbs-field {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--input-background);
+    color: var(--foreground);
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  .qbs-field:hover {
+    border-color: var(--border-strong);
+    background: var(--card);
+  }
+
+  .qbs-field:focus-within,
+  .qbs-field[data-open="true"] {
+    border-color: color-mix(in srgb, var(--ring) 70%, var(--border));
+    background: var(--card);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 22%, transparent);
+  }
+
+  .qbs-icon-well {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+    background: var(--muted);
+    color: var(--muted-foreground);
+  }
+
+  .qbs-badge {
+    border: 1px solid transparent;
+    background: var(--muted);
+    color: var(--foreground);
+  }
+
+  .qbs-badge-success {
+    border-color: color-mix(in srgb, var(--success) 20%, transparent);
+    background: var(--success-muted);
+    color: var(--success);
+  }
+
+  .qbs-badge-warning {
+    border-color: color-mix(in srgb, var(--warning) 22%, transparent);
+    background: var(--warning-muted);
+    color: var(--warning);
+  }
+
+  .qbs-badge-danger {
+    border-color: color-mix(in srgb, var(--destructive) 20%, transparent);
+    background: var(--destructive-muted);
+    color: var(--destructive);
+  }
+
+  .qbs-badge-info {
+    border-color: color-mix(in srgb, var(--info) 20%, transparent);
+    background: var(--info-muted);
+    color: var(--info);
+  }
+}
+
 /* ── Toast animations ───────────────────────────── */
 @keyframes toast-slide-in {
   from {

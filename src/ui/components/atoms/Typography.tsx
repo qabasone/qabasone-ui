@@ -1,4 +1,4 @@
-import type { ElementType, ReactNode } from "react";
+import type { HTMLAttributes, ElementType, ReactNode } from "react";
 
 export type TypographyVariant =
   | "display-4xl"
@@ -6,6 +6,7 @@ export type TypographyVariant =
   | "display-2xl"
   | "title-xl"
   | "title-lg"
+  | "title-sm"
   | "body-lg"
   | "body"
   | "body-sm"
@@ -14,7 +15,7 @@ export type TypographyVariant =
   | "number"
   | "code";
 
-export type TypographyTone = "default" | "muted" | "error" | "primary";
+export type TypographyTone = "default" | "muted" | "error" | "primary" | "success" | "warning";
 export type NumericSystem = "western" | "arabic-indic";
 
 const VARIANT_CLASSES: Record<TypographyVariant, string> = {
@@ -23,6 +24,7 @@ const VARIANT_CLASSES: Record<TypographyVariant, string> = {
   "display-2xl": "text-2xl font-bold",
   "title-xl": "text-xl font-semibold",
   "title-lg": "text-lg font-semibold",
+  "title-sm": "text-sm font-semibold",
   "body-lg": "text-lg",
   body: "text-base",
   "body-sm": "text-sm",
@@ -37,6 +39,8 @@ const TONE_CLASSES: Record<TypographyTone, string> = {
   muted: "text-muted-foreground",
   error: "text-destructive",
   primary: "text-primary",
+  success: "text-success",
+  warning: "text-warning",
 };
 
 function cx(...values: Array<string | undefined | null | false>) {
@@ -55,11 +59,10 @@ export function formatNumericSystem(value: string | number, numericSystem: Numer
   return String(value);
 }
 
-export interface TextProps {
+export interface TextProps extends HTMLAttributes<HTMLElement> {
   as?: ElementType;
   variant?: TypographyVariant;
   tone?: TypographyTone;
-  className?: string;
   children: ReactNode;
 }
 
@@ -69,8 +72,9 @@ export function Text({
   tone = "default",
   className,
   children,
+  ...props
 }: TextProps) {
-  return <Comp className={cx(VARIANT_CLASSES[variant], TONE_CLASSES[tone], className)}>{children}</Comp>;
+  return <Comp className={cx(VARIANT_CLASSES[variant], TONE_CLASSES[tone], className)} {...props}>{children}</Comp>;
 }
 
 export interface NumberTextProps {

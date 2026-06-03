@@ -210,8 +210,8 @@ export function TabsTrigger({
     ? "h-10 px-3 border-b-2 border-primary text-primary font-semibold"
     : "h-10 px-3 border-b-2 border-transparent text-foreground/80 hover:text-foreground";
   const pillClasses = selected
-    ? "h-9 px-3 rounded-xl border border-primary/35 bg-primary/10 text-primary"
-    : "h-9 px-3 rounded-xl border border-border bg-card text-foreground/85 hover:bg-muted";
+    ? "h-9 px-3 rounded-lg border border-primary/35 bg-primary/10 text-primary shadow-sm"
+    : "h-9 px-3 rounded-lg border border-border bg-card text-foreground/85 hover:bg-muted";
 
   return (
     <button
@@ -224,7 +224,7 @@ export function TabsTrigger({
       data-value={value}
       data-tabs-trigger-variant={resolvedVariant}
       className={cx(
-        "inline-flex items-center gap-2 text-sm font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed",
+        "qbs-focus inline-flex items-center gap-2 text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed",
         resolvedVariant === "pill" ? pillClasses : topNavigationClasses,
         className
       )}

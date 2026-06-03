@@ -33,18 +33,18 @@ export type AccountingButtonAction =
   | "view";
 
 const VARIANT_STYLES: Record<ButtonVariant, { className: string; style?: CSSProperties }> = {
-  primary: { className: "bg-primary text-primary-foreground" },
-  secondary: { className: "bg-secondary text-secondary-foreground border border-border" },
-  outline: { className: "border border-border text-foreground bg-transparent" },
-  ghost: { className: "text-foreground bg-transparent" },
-  danger: { className: "bg-destructive text-destructive-foreground" },
-  success: { className: "bg-success text-success-foreground" },
+  primary: { className: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90" },
+  secondary: { className: "bg-secondary text-secondary-foreground border border-border hover:bg-muted" },
+  outline: { className: "border border-border text-foreground bg-card hover:bg-muted" },
+  ghost: { className: "text-foreground bg-transparent hover:bg-muted" },
+  danger: { className: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90" },
+  success: { className: "bg-success text-success-foreground shadow-sm hover:bg-success/90" },
   warning: {
-    className: "text-white",
+    className: "text-white shadow-sm",
     style: { backgroundColor: "var(--warning)" },
   },
   info: {
-    className: "text-white",
+    className: "text-white shadow-sm",
     style: { backgroundColor: "var(--info)" },
   },
 };
@@ -127,7 +127,7 @@ export function Button({
     <button
       type={type}
       className={cx(
-        "inline-flex items-center justify-center gap-2 rounded-lg cursor-pointer transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed shrink-0 font-medium hover:opacity-90 active:opacity-80",
+        "qbs-focus inline-flex items-center justify-center gap-2 rounded-lg cursor-pointer transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none shrink-0 font-medium active:scale-[0.98]",
         resolveSize(size, iconOnly),
         variantStyle.className,
         fullWidth && "w-full",

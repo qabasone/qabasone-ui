@@ -64,7 +64,7 @@ export function MoneyInput({
             ) : null}
             <div
                 className={cx(
-                    "flex items-center gap-2 rounded-2xl border bg-input px-3 py-2",
+                    "qbs-field flex items-center gap-2 px-3 py-2",
                     error ? "border-destructive" : "border-border",
                     disabled || readOnly ? "opacity-60" : ""
                 )}

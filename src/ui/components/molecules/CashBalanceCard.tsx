@@ -15,10 +15,10 @@ export interface CashBalanceCardProps {
 }
 
 const STATUS_STYLES: Record<CashBalanceCardProps["status"], string> = {
-    positive: "border border-success/20 bg-success/10 text-success-foreground",
-    zero: "border border-muted bg-muted text-muted-foreground",
-    negative: "border border-destructive/20 bg-destructive/10 text-destructive-foreground",
-    locked: "border border-warning/20 bg-warning/10 text-warning-foreground",
+    positive: "qbs-badge-success",
+    zero: "bg-muted text-muted-foreground",
+    negative: "qbs-badge-danger",
+    locked: "qbs-badge-warning",
 };
 
 function cx(...values: Array<string | undefined | null | false>) {
@@ -35,7 +35,7 @@ export function CashBalanceCard({
     onView,
 }: CashBalanceCardProps) {
     return (
-        <div className={cx("rounded-3xl p-5 shadow-sm", STATUS_STYLES[status])}>
+        <div className={cx("qbs-surface p-5", STATUS_STYLES[status])}>
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <Text as="p" variant="body-sm" tone="muted">

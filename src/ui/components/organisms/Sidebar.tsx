@@ -297,21 +297,11 @@ export function Sidebar({
                           <button
                             key={item.id}
                             onClick={() => setActive(item.id)}
-                            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-sm text-right transition-all"
+                            className="qbs-focus w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-sm text-right transition-all hover:bg-muted"
                             style={{
                               backgroundColor: isActive ? "var(--primary-muted)" : "transparent",
                               color: isActive ? "var(--primary)" : "var(--foreground)",
                               fontWeight: isActive ? 600 : 400,
-                            }}
-                            onMouseEnter={(e) => {
-                              if (!isActive) {
-                                (e.currentTarget as HTMLElement).style.backgroundColor = "var(--muted)";
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (!isActive) {
-                                (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
-                              }
                             }}
                           >
                             <item.icon
@@ -346,14 +336,8 @@ export function Sidebar({
             <div ref={footerRef} className="shrink-0 border-t px-2 py-2" style={{ borderColor: "var(--border)" }}>
               <button
                 onClick={openUserMenu}
-                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all"
+                className="qbs-focus w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-all hover:bg-muted"
                 style={{ backgroundColor: userMenuPos ? "var(--muted)" : "transparent" }}
-                onMouseEnter={(e) => {
-                  if (!userMenuPos) (e.currentTarget as HTMLElement).style.backgroundColor = "var(--muted)";
-                }}
-                onMouseLeave={(e) => {
-                  if (!userMenuPos) (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
-                }}
               >
                 <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center shrink-0">
                   <span className="text-white text-[10px]" style={{ fontWeight: 700 }}>

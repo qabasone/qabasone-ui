@@ -176,7 +176,7 @@ export function LoginAuth({
   }
 
   return (
-    <div dir={dir} className="w-full max-w-md bg-card border border-border rounded-2xl p-6 space-y-5">
+    <div dir={dir} className="qbs-surface w-full max-w-md p-6 space-y-5">
       <div className="space-y-1">
         <Text as="p" variant="caption" tone="muted">
           نظام {branding.appName}
@@ -217,7 +217,7 @@ export function LoginAuth({
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   type={meta.type}
-                  className="w-full h-11 rounded-xl bg-input-background border border-border pe-10 ps-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="qbs-field qbs-focus w-full h-11 pe-10 ps-3 text-sm"
                   placeholder={meta.placeholder}
                 />
                 <meta.icon
@@ -236,7 +236,7 @@ export function LoginAuth({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   type={showPassword ? "text" : "password"}
-                  className="w-full h-11 rounded-xl bg-input-background border border-border pe-10 ps-10 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="qbs-field qbs-focus w-full h-11 pe-10 ps-10 text-sm"
                   placeholder="أدخل كلمة المرور"
                 />
                 <Lock
@@ -246,7 +246,7 @@ export function LoginAuth({
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="qbs-focus absolute start-2 top-1/2 -translate-y-1/2 h-7 w-7 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -324,7 +324,7 @@ export function LoginAuth({
               <input
                 value={otpValue}
                 onChange={(e) => setOtpValue(e.target.value)}
-                className="w-full h-11 rounded-xl bg-input-background border border-border pe-10 ps-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring amount"
+                className="qbs-field qbs-focus w-full h-11 pe-10 ps-3 text-sm amount"
                 inputMode={otpMode === "otp" ? "numeric" : "text"}
                 placeholder={otpMode === "otp" ? "000000" : "أدخل رمز الاسترداد"}
               />

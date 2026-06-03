@@ -68,7 +68,7 @@ export function SidebarUserMenu({
         animation: "ctx-in 0.18s cubic-bezier(0.16,1,0.3,1) both",
         [position.side]: position.sideOffset,
       }}
-      className="bg-card rounded-2xl border border-border py-1.5"
+      className="qbs-panel py-1.5"
     >
       <div className="flex items-center gap-2.5 px-3.5 py-3 border-b border-border mb-1">
         <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0">
@@ -100,7 +100,7 @@ export function SidebarUserMenu({
                   item.onSelect?.();
                   onClose();
                 }}
-                className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-sm text-right hover:bg-muted transition-colors"
+                className="qbs-focus w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-sm text-right hover:bg-muted transition-colors"
                 style={{
                   color: item.danger ? "var(--destructive)" : "var(--foreground)",
                   fontWeight: 500,

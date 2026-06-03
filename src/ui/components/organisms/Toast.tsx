@@ -103,7 +103,7 @@ export function ToastItem({
 
   return (
     <div
-      className="bg-card border border-border rounded-2xl flex items-start gap-3 relative"
+      className="qbs-panel flex items-start gap-3 relative"
       style={{
         boxShadow: "var(--shadow-popover)",
         padding: expanded ? "14px 16px" : "10px 14px",
@@ -113,7 +113,7 @@ export function ToastItem({
       }}
     >
       <div
-        className="rounded-xl flex items-center justify-center shrink-0"
+        className="rounded-lg flex items-center justify-center shrink-0"
         style={{
           width: expanded ? 34 : 28,
           height: expanded ? 34 : 28,
@@ -139,7 +139,7 @@ export function ToastItem({
                 {data.action && (
                   <button
                     onClick={() => { data.action!.onClick(); onDismiss?.(); }}
-                    className="h-7 px-3 rounded-lg text-xs text-white transition-opacity hover:opacity-85 active:opacity-75"
+                    className="qbs-focus h-7 px-3 rounded-lg text-xs text-white transition-opacity hover:opacity-85 active:opacity-75"
                     style={{ backgroundColor: actionBg, fontWeight: 600 }}
                   >
                     {data.action.label}
@@ -148,7 +148,7 @@ export function ToastItem({
                 {data.secondaryAction && (
                   <button
                     onClick={() => { data.secondaryAction!.onClick(); onDismiss?.(); }}
-                    className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    className="qbs-focus h-7 px-2 rounded-md text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                     style={{ fontWeight: 500 }}
                   >
                     {data.secondaryAction.label}
@@ -167,7 +167,7 @@ export function ToastItem({
                 {data.action && (
                   <button
                     onClick={() => { data.action!.onClick(); onDismiss?.(); }}
-                    className="h-7 px-3 rounded-lg text-xs text-white transition-opacity hover:opacity-85 active:opacity-75 shrink-0"
+                    className="qbs-focus h-7 px-3 rounded-lg text-xs text-white transition-opacity hover:opacity-85 active:opacity-75 shrink-0"
                     style={{ backgroundColor: actionBg, fontWeight: 600 }}
                   >
                     {data.action.label}
@@ -176,7 +176,7 @@ export function ToastItem({
                 {data.secondaryAction && (
                   <button
                     onClick={() => { data.secondaryAction!.onClick(); onDismiss?.(); }}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                    className="qbs-focus h-7 px-2 rounded-md text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors shrink-0"
                     style={{ fontWeight: 500 }}
                   >
                     {data.secondaryAction.label}
@@ -191,7 +191,7 @@ export function ToastItem({
       {data.closable && (
         <button
           onClick={onDismiss}
-          className="shrink-0 w-6 h-6 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors self-start"
+          className="qbs-focus shrink-0 w-6 h-6 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors self-start"
           aria-label={closeAriaLabel}
         >
           <X size={12} />

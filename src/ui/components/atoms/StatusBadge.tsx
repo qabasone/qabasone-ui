@@ -2,15 +2,16 @@ import type { HTMLAttributes, ReactNode } from "react";
 import { CheckCircle2, AlertTriangle, Info, XCircle } from "lucide-react";
 
 const VARIANT_STYLES: Record<string, { className: string; title: string }> = {
-    normal: { className: "bg-muted text-foreground", title: "معلومات" },
-    success: { className: "bg-success text-success-foreground", title: "ناجح" },
-    warning: { className: "bg-warning text-warning-foreground", title: "تنبيه" },
-    critical: { className: "bg-destructive text-destructive-foreground", title: "خطأ" },
-    info: { className: "bg-info text-info-foreground", title: "معلومات" },
-    draft: { className: "bg-muted text-foreground", title: "مسودة" },
-    posted: { className: "bg-success text-success-foreground", title: "مرحّل" },
-    cancelled: { className: "bg-muted text-foreground", title: "ملغى" },
-    failed: { className: "bg-destructive text-destructive-foreground", title: "فشل" },
+    normal: { className: "qbs-badge", title: "معلومات" },
+    muted: { className: "qbs-badge text-muted-foreground", title: "معلومات" },
+    success: { className: "qbs-badge-success", title: "ناجح" },
+    warning: { className: "qbs-badge-warning", title: "تنبيه" },
+    critical: { className: "qbs-badge-danger", title: "خطأ" },
+    info: { className: "qbs-badge-info", title: "معلومات" },
+    draft: { className: "qbs-badge text-muted-foreground", title: "مسودة" },
+    posted: { className: "qbs-badge-success", title: "مرحّل" },
+    cancelled: { className: "qbs-badge text-muted-foreground", title: "ملغى" },
+    failed: { className: "qbs-badge-danger", title: "فشل" },
 };
 
 function cx(...values: Array<string | undefined | null | false>) {

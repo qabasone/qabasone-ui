@@ -6,11 +6,11 @@ const CARD_VARIANTS: Record<
     "normal" | "success" | "warning" | "critical" | "muted",
     string
 > = {
-    normal: "bg-card text-foreground",
-    success: "bg-success/10 text-success-foreground border border-success/20",
-    warning: "bg-warning/10 text-warning-foreground border border-warning/20",
-    critical: "bg-destructive/10 text-destructive-foreground border border-destructive/20",
-    muted: "bg-muted text-muted-foreground",
+    normal: "qbs-surface text-foreground",
+    success: "qbs-surface qbs-badge-success",
+    warning: "qbs-surface qbs-badge-warning",
+    critical: "qbs-surface qbs-badge-danger",
+    muted: "qbs-surface bg-muted text-muted-foreground",
 };
 
 const TREND_ICONS = {
@@ -63,9 +63,9 @@ export function SummaryCard({
                 }
             }}
             className={cx(
-                "rounded-3xl border p-5 shadow-sm transition-all duration-150",
+                "p-5 transition-all duration-150",
                 CARD_VARIANTS[status],
-                clickable ? "cursor-pointer hover:shadow-md" : "",
+                clickable ? "qbs-focus cursor-pointer hover:-translate-y-0.5 hover:shadow-md" : "",
                 className
             )}
             aria-label={clickable ? `${label} - اضغط للمزيد` : label}

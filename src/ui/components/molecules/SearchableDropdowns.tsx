@@ -25,7 +25,7 @@ export interface AccountOption {
 }
 
 const inputBase =
-  "w-full h-10 px-3 rounded-lg border border-border bg-input-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-sm";
+  "qbs-field qbs-focus w-full h-10 px-3 text-sm placeholder:text-muted-foreground";
 
 function getTextAlignClass(dir: Direction) {
   return dir === "ltr" ? "text-left" : "text-right";
@@ -45,7 +45,7 @@ function useOutsideClick(ref: React.RefObject<HTMLElement>, handler: () => void)
 function DropdownPanel({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="absolute top-full mt-1.5 w-full z-50 bg-card border border-border rounded-xl overflow-hidden"
+      className="qbs-panel absolute top-full mt-1.5 w-full z-50 overflow-hidden"
       style={{ boxShadow: "var(--shadow-popover)" }}
     >
       {children}
@@ -67,7 +67,7 @@ function DropdownSearch({
       <div className="relative">
         <Search size={13} className="absolute top-1/2 -translate-y-1/2 start-2.5 text-muted-foreground pointer-events-none" />
         <input
-          className="w-full h-8 ps-8 pe-3 rounded-lg bg-muted border-0 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+          className="qbs-field w-full h-8 ps-8 pe-3 text-sm placeholder:text-muted-foreground"
           placeholder={placeholder}
           value={value}
           onChange={e => onChange(e.target.value)}
@@ -116,6 +116,7 @@ export function SearchableDropdown({
       <button
         type="button"
         className={`${inputBase} flex items-center justify-between gap-2 cursor-pointer`}
+        data-open={open}
         onClick={() => setOpen(!open)}
       >
         <span className={`${selected ? "text-foreground" : "text-muted-foreground"} ${getTextAlignClass(dir)} flex-1`}>
@@ -190,7 +191,8 @@ export function MultiSelectDropdown({
   return (
     <div ref={ref} className="relative" dir={dir}>
       <div
-        className={`min-h-10 px-3 py-1.5 rounded-lg border border-border bg-input-background flex flex-wrap items-center gap-1.5 cursor-pointer transition-all ${open ? "ring-2 ring-ring border-transparent" : ""}`}
+        className="qbs-field min-h-10 px-3 py-1.5 flex flex-wrap items-center gap-1.5 cursor-pointer"
+        data-open={open}
         onClick={() => setOpen(!open)}
       >
         {value.length === 0 ? (
@@ -199,7 +201,7 @@ export function MultiSelectDropdown({
           value.map(v => {
             const opt = options.find(o => o.value === v);
             return opt ? (
-              <span key={v} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-md font-medium">
+              <span key={v} className="inline-flex items-center gap-1 qbs-badge-info text-xs px-2 py-0.5 rounded-md font-medium">
                 {opt.label}
                 <button type="button" onClick={e => remove(v, e)} className="hover:opacity-70 transition-opacity">
                   <X size={10} />
@@ -224,7 +226,7 @@ export function MultiSelectDropdown({
                   className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors ${getTextAlignClass(dir)}`}
                   onClick={() => toggle(o.value)}
                 >
-                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${checked ? "bg-primary border-primary" : "border-border bg-input-background"}`}>
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${checked ? "bg-primary border-primary" : "border-border bg-input-background"}`}>
                     {checked && <Check size={10} strokeWidth={3} className="text-white" />}
                   </div>
                   <span>{o.label}</span>
@@ -290,6 +292,7 @@ export function UserDropdown({
       <button
         type="button"
         className={`${inputBase} flex items-center gap-2.5 cursor-pointer`}
+        data-open={open}
         onClick={() => setOpen(!open)}
       >
         {selected ? (
@@ -370,6 +373,7 @@ export function AccountDropdown({
       <button
         type="button"
         className={`${inputBase} flex items-center gap-2.5 cursor-pointer`}
+        data-open={open}
         onClick={() => setOpen(!open)}
       >
         {selected ? (

@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import type { FormatAmountOptions } from '../../utils/formatAmount';
 import { formatAmount } from '../../utils/formatAmount';
-import { Text } from './Typography';
+import { Text, type TypographyTone, type TypographyVariant } from './Typography';
 
 export interface FormattedAmountProps {
     value: number | null | undefined;
     /**  Text variant from Typography */
-    variant?: 'body-sm' | 'body-lg' | 'caption' | 'title-sm' | 'title-lg' | 'title-xl';
+    variant?: TypographyVariant;
     /**  Text tone/color */
-    tone?: 'default' | 'muted' | 'success' | 'warning' | 'error';
+    tone?: TypographyTone;
     /**  Override format (auto, full, thousands, millions, billions) */
     format?: 'auto' | 'full' | 'thousands' | 'millions' | 'billions';
     /**  Override currency label */

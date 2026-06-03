@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Text } from './Typography';
+import { Text, type TypographyTone, type TypographyVariant } from './Typography';
 
 export type QuantityUnit = 'كيلو' | 'طن' | 'أردب صغير' | 'أردب كبير' | 'عبوة' | 'كيس';
 
@@ -8,9 +8,9 @@ export interface FormattedQuantityProps {
     /** Unit of measurement */
     unit: QuantityUnit;
     /** Text variant from Typography */
-    variant?: 'body-sm' | 'body-lg' | 'caption' | 'title-sm' | 'title-lg' | 'title-xl';
+    variant?: TypographyVariant;
     /** Text tone/color */
-    tone?: 'default' | 'muted' | 'success' | 'warning' | 'error';
+    tone?: TypographyTone;
     /** Auto-convert to larger units (e.g., 12,500 كيلو → 12.5 طن) */
     autoConvert?: boolean;
     /** Show original unit in parentheses when converted */

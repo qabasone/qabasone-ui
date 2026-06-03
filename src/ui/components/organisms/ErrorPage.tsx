@@ -34,7 +34,7 @@ export function ErrorPage({
   return (
     <section
       dir="rtl"
-      className="bg-card rounded-2xl border border-border"
+      className="qbs-surface"
       style={{ boxShadow: "var(--shadow-card)" }}
     >
       <div
@@ -47,7 +47,7 @@ export function ErrorPage({
           </Text>
         </div> */}
 
-        <div className="mx-auto w-16 h-16 rounded-2xl bg-muted flex items-center justify-center">
+        <div className="qbs-icon-well mx-auto w-16 h-16">
           <Icon size={28} className="text-muted-foreground" />
         </div>
 

@@ -186,18 +186,16 @@ export function ConfirmModal({
 
       <div
         ref={panelRef}
-        className="relative w-full"
+        className="qbs-panel relative w-full"
         style={{
           maxWidth: "400px",
-          backgroundColor: "var(--card)",
-          borderRadius: "20px",
           boxShadow: "var(--shadow-modal)",
           animation: "modal-slide-in 0.22s cubic-bezier(0.16,1,0.3,1) both",
           padding: "24px",
         }}
       >
         <div
-          className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
+          className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
           style={{ backgroundColor: cfg.iconBg }}
         >
           <Icon size={22} style={{ color: cfg.iconColor }} strokeWidth={2.2} />
@@ -256,15 +254,13 @@ export function ConfirmModal({
             ref={cancelRef}
             onClick={onCancel}
             disabled={loading}
-            className="h-9 px-4 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-40"
+            className="qbs-focus h-9 px-4 rounded-lg text-sm transition-all disabled:opacity-40 hover:bg-muted"
             style={{
               border: "1.5px solid var(--border-strong)",
               backgroundColor: "var(--card)",
               color: "var(--foreground)",
               fontWeight: 500,
             }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--muted)"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--card)"; }}
           >
             {resolvedCancelLabel}
           </button>
@@ -273,7 +269,7 @@ export function ConfirmModal({
             ref={confirmRef}
             onClick={onConfirm}
             disabled={loading}
-            className="h-9 px-4 rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-60 flex items-center gap-2"
+            className="qbs-focus h-9 px-4 rounded-lg text-sm transition-all disabled:opacity-60 flex items-center gap-2 hover:opacity-90"
             style={{
               backgroundColor: cfg.btnBg,
               color: cfg.btnColor,
@@ -281,8 +277,6 @@ export function ConfirmModal({
               minWidth: "80px",
               justifyContent: "center",
             }}
-            onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLElement).style.backgroundColor = cfg.btnHover; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = cfg.btnBg; }}
           >
             {loading && <Loader2 size={14} className="animate-spin shrink-0" />}
             {resolvedConfirmLabel}
