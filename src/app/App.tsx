@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Palette, Type, AlignVerticalSpaceAround, Square, MousePointer2, Rows3, FormInput, Table2,
   Tag, LayoutGrid, Inbox, PanelRight, FileText, Users, LayoutDashboard,
-  ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn, AlertTriangle, ChevronDown, ShieldCheck,
+  ChevronLeft, ChevronRight, Menu, X, BellRing, ClipboardList, Coins, Zap, MessageSquareWarning, LogIn, AlertTriangle, ChevronDown, ShieldCheck, CalendarDays, BookOpen,
 } from "lucide-react";
 import { ToastProvider } from "@/ui/components/Toast";
 import { ColorsSection } from "./components/sections/ColorsSection";
@@ -29,6 +29,8 @@ import { InvoiceEntrySection } from "./components/sections/InvoiceEntrySection";
 import { ErrorPagesSection } from "./components/sections/ErrorPagesSection";
 import { SystemReadinessSection } from "./components/sections/SystemReadinessSection";
 import { OperationalAlertsSection } from "./components/sections/OperationalAlertsSection";
+import { FiscalPeriodsSection } from "./components/sections/FiscalPeriodsSection";
+import { ChartOfAccountsSection } from "./components/sections/ChartOfAccountsSection";
 
 const sectionGroups = [
   {
@@ -69,8 +71,10 @@ const sectionGroups = [
       { id: "dashboard", num: "16", label: "لوحة التحكم", icon: LayoutDashboard, component: DashboardSection },
       { id: "system-readiness", num: "17", label: "جاهزية التشغيل", icon: ShieldCheck, component: SystemReadinessSection },
       { id: "operational-alerts", num: "18", label: "مركز التنبيهات", icon: BellRing, component: OperationalAlertsSection },
-      { id: "login", num: "19", label: "تسجيل الدخول", icon: LogIn, component: LoginSection },
-      { id: "error-pages", num: "20", label: "صفحات الأخطاء", icon: AlertTriangle, component: ErrorPagesSection },
+      { id: "fiscal-periods", num: "19", label: "الفترات المالية", icon: CalendarDays, component: FiscalPeriodsSection },
+      { id: "chart-of-accounts", num: "20", label: "دليل الحسابات", icon: BookOpen, component: ChartOfAccountsSection },
+      { id: "login", num: "21", label: "تسجيل الدخول", icon: LogIn, component: LoginSection },
+      { id: "error-pages", num: "22", label: "صفحات الأخطاء", icon: AlertTriangle, component: ErrorPagesSection },
     ],
   },
 ];
