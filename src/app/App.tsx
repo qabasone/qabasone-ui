@@ -25,7 +25,7 @@ import { FormsSection } from "./components/sections/FormsSection";
 import { AmountInputsSection } from "./components/sections/AmountInputsSection";
 import { ConfirmModalSection } from "./components/sections/ConfirmModalSection";
 import { LoginSection } from "./components/sections/LoginSection";
-import { InvoiceEntrySection } from "./components/sections/InvoiceEntrySection";
+
 import { ErrorPagesSection } from "./components/sections/ErrorPagesSection";
 import { SystemReadinessSection } from "./components/sections/SystemReadinessSection";
 import { OperationalAlertsSection } from "./components/sections/OperationalAlertsSection";
@@ -51,7 +51,7 @@ const sectionGroups = [
       { id: "tabs", num: "05b", label: "التبويبات", icon: Rows3, component: TabsSection },
       { id: "inputs", num: "06", label: "الحقول", icon: FormInput, component: InputsSection },
       { id: "amounts", num: "06b", label: "المدخلات المالية", icon: Coins, component: AmountInputsSection },
-      { id: "invoice-entry", num: "06c", label: "إدخال الفاتورة", icon: Zap, component: InvoiceEntrySection },
+
       { id: "tables", num: "07", label: "الجداول", icon: Table2, component: TablesSection },
       { id: "badges", num: "08", label: "الشارات", icon: Tag, component: BadgesSection },
       { id: "cards", num: "09", label: "البطاقات", icon: LayoutGrid, component: CardsSection },

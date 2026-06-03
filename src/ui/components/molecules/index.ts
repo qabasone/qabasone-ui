@@ -4,6 +4,8 @@ export * from './SearchableDropdowns';
 export * from './SidebarUserMenu';
 export * from './SplitButton';
 export * from './Tabs';
+export * from './TableFilters';
+export * from './DataTable';
 export * from './SummaryCard';
 export * from './PeriodFilter';
 export * from './AlertPanel';

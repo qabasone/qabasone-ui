@@ -4,6 +4,8 @@ import {
   ChevronDown,
   Search,
   Download,
+  Columns3,
+  SlidersHorizontal,
   Printer,
   Pencil,
   Eye,
@@ -15,6 +17,7 @@ import {
   ExternalLink,
   Archive,
   Send,
+  X,
 } from "lucide-react";
 import {
   Pagination as BasePagination,
@@ -27,6 +30,8 @@ import {
   type ContextMenuTriggerProps,
 } from "@/ui/components/ContextMenu";
 import { EntityLink } from "@/ui/components/EntityLink";
+import { DataTable, TableFilterBar, type DataTableColumn, type TableFilterDefinition, type TableFilterValue } from "@/ui/components";
+import { applyTableFilters, countOptions } from "@/ui/utils";
 
 // ── Sample data (30 rows so pagination is meaningful) ─────────────────────────
 
@@ -376,7 +381,10 @@ const COLS = [
   { key: "amount", label: "الإجمالي" },
   { key: "date", label: "التاريخ" },
   { key: "status", label: "الحالة" },
-];
+] as const;
+
+type InvoiceColumnKey = (typeof COLS)[number]["key"];
+type InvoiceColumn = (typeof COLS)[number];
 
 function TableHead({
   sortCol,
@@ -385,6 +393,7 @@ function TableHead({
   selected,
   allIds,
   onToggleAll,
+  columns,
 }: {
   sortCol: string;
   sortDir: "asc" | "desc";
@@ -392,6 +401,7 @@ function TableHead({
   selected: string[];
   allIds: string[];
   onToggleAll: () => void;
+  columns: readonly InvoiceColumn[];
 }) {
   const allSelected =
     allIds.length > 0 && selected.length === allIds.length;
@@ -399,29 +409,15 @@ function TableHead({
     <thead className="bg-muted/40 border-b border-border">
       <tr>
         <th className="p-3 text-start w-10">
-          <div
-            className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center ${allSelected ? "bg-primary border-primary" : "border-border"}`}
-            onClick={onToggleAll}
-          >
-            {allSelected && (
-              <svg
-                width="10"
-                height="8"
-                viewBox="0 0 10 8"
-                fill="none"
-              >
-                <path
-                  d="M1 4L3.5 6.5L9 1"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            )}
-          </div>
+          <input
+            type="checkbox"
+            checked={allSelected}
+            onChange={onToggleAll}
+            aria-label="تحديد كل الصفوف في الصفحة"
+            className="h-4 w-4 rounded border-border accent-primary"
+          />
         </th>
-        {COLS.map((col) => (
+        {columns.map((col) => (
           <th
             key={col.key}
             className="p-3 text-start text-xs text-muted-foreground uppercase tracking-wide cursor-pointer hover:text-foreground transition-colors"
@@ -463,21 +459,21 @@ function invoiceMenuGroups(
           id: "view",
           label: "عرض التفاصيل",
           icon: Eye,
-          onClick: () => {},
+          onClick: () => { },
         },
         {
           id: "edit",
           label: "تعديل الفاتورة",
           icon: Pencil,
           shortcut: "E",
-          onClick: () => {},
+          onClick: () => { },
         },
         {
           id: "copy",
           label: "نسخ رقم الفاتورة",
           icon: Copy,
           shortcut: "Ctrl+C",
-          onClick: () => {},
+          onClick: () => { },
         },
       ],
     },
@@ -487,20 +483,20 @@ function invoiceMenuGroups(
           id: "send",
           label: "إرسال للعميل",
           icon: Send,
-          onClick: () => {},
+          onClick: () => { },
         },
         {
           id: "duplicate",
           label: "تكرار الفاتورة",
           icon: ExternalLink,
           variant: "featured",
-          onClick: () => {},
+          onClick: () => { },
         },
         {
           id: "archive",
           label: "أرشفة",
           icon: Archive,
-          onClick: () => {},
+          onClick: () => { },
         },
       ],
     },
@@ -512,7 +508,7 @@ function invoiceMenuGroups(
           icon: Trash2,
           variant: "danger",
           shortcut: "Del",
-          onClick: () => {},
+          onClick: () => { },
         },
       ],
     },
@@ -523,17 +519,19 @@ function TableRows({
   rows,
   selected,
   onToggle,
+  columns,
 }: {
   rows: typeof ALL_INVOICES;
   selected: string[];
   onToggle: (id: string) => void;
+  columns: readonly InvoiceColumn[];
 }) {
   if (rows.length === 0) {
     return (
       <tbody>
         <tr>
           <td
-            colSpan={9}
+            colSpan={columns.length + 2}
             className="p-12 text-center text-muted-foreground text-sm"
           >
             لا توجد نتائج مطابقة للبحث
@@ -550,63 +548,63 @@ function TableRows({
           className={`border-b border-border last:border-0 hover:bg-muted/30 transition-colors ${selected.includes(inv.id) ? "bg-primary/5" : ""}`}
         >
           <td className="p-3">
-            <div
-              className={`w-4 h-4 rounded border-2 cursor-pointer flex items-center justify-center transition-colors ${selected.includes(inv.id) ? "bg-primary border-primary" : "border-border"}`}
-              onClick={() => onToggle(inv.id)}
-            >
-              {selected.includes(inv.id) && (
-                <svg
-                  width="10"
-                  height="8"
-                  viewBox="0 0 10 8"
-                  fill="none"
-                >
-                  <path
-                    d="M1 4L3.5 6.5L9 1"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              )}
-            </div>
-          </td>
-          <td className="p-3">
-            <EntityLink
-              variant="id"
-              label={inv.id}
-              onClick={() => {}}
+            <input
+              type="checkbox"
+              checked={selected.includes(inv.id)}
+              onChange={() => onToggle(inv.id)}
+              aria-label={`تحديد ${inv.id}`}
+              className="h-4 w-4 rounded border-border accent-primary"
             />
           </td>
-          <td className="p-3">
-            <EntityLink
-              label={inv.customer}
-              onClick={() => {}}
-            />
-          </td>
-          <td className="p-3">
-            <EntityLink
-              variant="badge"
-              label={inv.product}
-              onClick={() => {}}
-            />
-          </td>
-          <td className="p-3 text-sm text-muted-foreground amount">
-            {inv.qty}
-          </td>
-          <td
-            className="p-3 text-sm text-foreground amount"
-            style={{ fontWeight: 600 }}
-          >
-            {inv.amount} ج.م
-          </td>
-          <td className="p-3 text-sm text-muted-foreground amount">
-            {inv.date}
-          </td>
-          <td className="p-3">
-            <StatusBadge status={inv.status} />
-          </td>
+          {columns.map((col) => {
+            if (col.key === "id") {
+              return (
+                <td key={col.key} className="p-3">
+                  <EntityLink variant="id" label={inv.id} onClick={() => { }} />
+                </td>
+              );
+            }
+            if (col.key === "customer") {
+              return (
+                <td key={col.key} className="p-3">
+                  <EntityLink label={inv.customer} onClick={() => { }} />
+                </td>
+              );
+            }
+            if (col.key === "product") {
+              return (
+                <td key={col.key} className="p-3">
+                  <EntityLink variant="badge" label={inv.product} onClick={() => { }} />
+                </td>
+              );
+            }
+            if (col.key === "qty") {
+              return (
+                <td key={col.key} className="p-3 text-sm text-muted-foreground amount">
+                  {inv.qty}
+                </td>
+              );
+            }
+            if (col.key === "amount") {
+              return (
+                <td key={col.key} className="p-3 text-sm text-foreground amount" style={{ fontWeight: 600 }}>
+                  {inv.amount} ج.م
+                </td>
+              );
+            }
+            if (col.key === "date") {
+              return (
+                <td key={col.key} className="p-3 text-sm text-muted-foreground amount">
+                  {inv.date}
+                </td>
+              );
+            }
+            return (
+              <td key={col.key} className="p-3">
+                <StatusBadge status={inv.status} />
+              </td>
+            );
+          })}
           <td className="p-3">
             <ContextMenuTrigger groups={invoiceMenuGroups(inv)}>
               <button className="w-7 h-7 rounded-md flex flex-end items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
@@ -625,6 +623,11 @@ function TableRows({
 export function TablesSection() {
   // ── Table 1: pagination at bottom ──────────────────────────────────────────
   const [search1, setSearch1] = useState("");
+  const [statusFilter1, setStatusFilter1] = useState("all");
+  const [productFilters1, setProductFilters1] = useState<string[]>([]);
+  const [visibleColumnKeys, setVisibleColumnKeys] = useState<InvoiceColumnKey[]>(
+    () => COLS.map((col) => col.key)
+  );
   const [selected1, setSelected1] = useState<string[]>([]);
   const [sortCol1, setSortCol1] = useState("date");
   const [sortDir1, setSortDir1] = useState<"asc" | "desc">(
@@ -633,16 +636,34 @@ export function TablesSection() {
   const [page1, setPage1] = useState(1);
   const [pageSize1, setPageSize1] = useState(5);
 
-  const filtered1 = ALL_INVOICES.filter(
-    (inv) =>
-      inv.customer.includes(search1) ||
-      inv.id.includes(search1) ||
-      inv.product.includes(search1),
+  const statusCounts = countOptions(ALL_INVOICES, (invoice) => invoice.status);
+  const productCounts = countOptions(ALL_INVOICES, (invoice) => invoice.product);
+  const filtered1 = applyTableFilters(
+    ALL_INVOICES,
+    {
+      search: search1,
+      equals: { status: statusFilter1 },
+      includes: { product: productFilters1 },
+    },
+    {
+      searchAccessors: [
+        (invoice) => invoice.id,
+        (invoice) => invoice.customer,
+        (invoice) => invoice.product,
+      ],
+      equalsAccessors: {
+        status: (invoice) => invoice.status,
+      },
+      includesAccessors: {
+        product: (invoice) => invoice.product,
+      },
+    }
   );
   const paged1 = filtered1.slice(
     (page1 - 1) * pageSize1,
     page1 * pageSize1,
   );
+  const visibleColumns = COLS.filter((col) => visibleColumnKeys.includes(col.key));
 
   const toggleSort1 = (key: string) => {
     if (sortCol1 === key)
@@ -652,6 +673,99 @@ export function TablesSection() {
       setSortDir1("asc");
     }
   };
+
+  const dataTableColumns: DataTableColumn<(typeof ALL_INVOICES)[number]>[] = visibleColumns.map((col) => ({
+    id: col.key,
+    header: col.label,
+    sortable: true,
+    sortDirection: sortCol1 === col.key ? sortDir1 : null,
+    onSort: () => toggleSort1(col.key),
+    cell: (inv) => {
+      if (col.key === "id") return <EntityLink variant="id" label={inv.id} onClick={() => { }} />;
+      if (col.key === "customer") return <EntityLink label={inv.customer} onClick={() => { }} />;
+      if (col.key === "product") return <EntityLink variant="badge" label={inv.product} onClick={() => { }} />;
+      if (col.key === "qty") return <span className="amount text-muted-foreground">{inv.qty}</span>;
+      if (col.key === "amount") return <span className="amount font-semibold text-foreground">{inv.amount} ج.م</span>;
+      if (col.key === "status") return <StatusBadge status={inv.status as keyof typeof statusMap} />;
+      return <span className="text-muted-foreground">{inv[col.key]}</span>;
+    },
+  }));
+
+  const filters1: TableFilterDefinition[] = [
+    {
+      id: "search",
+      type: "search",
+      label: "بحث",
+      placeholder: "رقم الفاتورة، العميل، أو المنتج...",
+      value: search1,
+      minWidth: 300,
+    },
+    {
+      id: "status",
+      type: "select",
+      label: "الحالة",
+      value: statusFilter1,
+      allLabel: "كل الحالات",
+      options: Object.entries(statusMap).map(([value, item]) => ({
+        value,
+        label: item.label,
+        count: statusCounts[value] ?? 0,
+      })),
+    },
+    {
+      id: "product",
+      type: "multi-select",
+      label: "المنتج",
+      value: productFilters1,
+      minWidth: 320,
+      options: Object.entries(productCounts).map(([value, count]) => ({
+        value,
+        label: value,
+        count,
+      })),
+    },
+  ];
+
+  const updateFilter1 = (filterId: string, value: TableFilterValue) => {
+    if (filterId === "search") setSearch1(String(value));
+    if (filterId === "status") setStatusFilter1(String(value || "all"));
+    if (filterId === "product") setProductFilters1(Array.isArray(value) ? value : []);
+    setPage1(1);
+    setSelected1([]);
+  };
+
+  const clearFilters1 = () => {
+    setSearch1("");
+    setStatusFilter1("all");
+    setProductFilters1([]);
+    setPage1(1);
+    setSelected1([]);
+  };
+
+  const toggleColumn = (key: InvoiceColumnKey) => {
+    setVisibleColumnKeys((current) => {
+      if (current.includes(key)) {
+        return current.length === 1 ? current : current.filter((item) => item !== key);
+      }
+      return [...current, key];
+    });
+  };
+
+  const selectedBulkGroups: ContextMenuGroup[] = [
+    {
+      label: `${selected1.length} صف محدد`,
+      items: [
+        { id: "export-selected", label: "تصدير المحدد", icon: Download, onClick: () => { } },
+        { id: "print-selected", label: "طباعة المحدد", icon: Printer, onClick: () => { } },
+        { id: "archive-selected", label: "أرشفة المحدد", icon: Archive, onClick: () => { } },
+      ],
+    },
+    {
+      items: [
+        { id: "clear-selection", label: "إلغاء التحديد", icon: X, onClick: () => setSelected1([]) },
+      ],
+    },
+  ];
 
   // ── Table 2: pagination at top ──────────────────────────────────────────────
   const [page2, setPage2] = useState(1);
@@ -671,6 +785,197 @@ export function TablesSection() {
 
   return (
     <div className="space-y-10">
+      <DataTable
+        title="جدول الفواتير القابل لإعادة الاستخدام"
+        subtitle="هيكل واحد يجمع العنوان، الفلاتر، البحث، التحكم في الأعمدة، الزر الأساسي، تحديد الصفوف، وتذييل الجدول."
+        rows={paged1}
+        columns={dataTableColumns}
+        getRowId={(invoice) => invoice.id}
+        primaryActions={[
+          { id: "create", label: "إضافة فاتورة", action: "create", onClick: () => { } },
+          { id: "export", label: "تصدير الفواتير", icon: Download, action: "export", onClick: () => { } },
+          { id: "archive", label: "أرشفة المحدد", icon: Archive, variant: "secondary", onClick: () => { } },
+        ]}
+        search={(
+          <label className="qbs-focus qbs-field flex h-8 w-full items-center gap-2 px-2.5">
+            <span className="sr-only">بحث</span>
+            <Search size={15} className="text-muted-foreground" aria-hidden="true" />
+            <input
+              type="search"
+              value={search1}
+              onChange={(event) => updateFilter1("search", event.target.value)}
+              placeholder="بحث في الفواتير..."
+              className="min-w-0 flex-1 bg-transparent text-sm outline-none"
+            />
+          </label>
+        )}
+        toolbar={(
+          <div className="flex items-center gap-2">
+          <details className="relative">
+            <summary className="qbs-focus inline-flex h-8 cursor-pointer list-none items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted marker:hidden">
+              <Columns3 size={14} />
+              الأعمدة
+            </summary>
+            <div className="qbs-panel absolute end-0 top-full z-50 mt-1.5 w-56 p-2">
+              <fieldset className="space-y-1">
+                <legend className="px-2 py-1 text-xs font-semibold text-muted-foreground">إظهار الأعمدة</legend>
+                {COLS.map((col) => {
+                  const checked = visibleColumnKeys.includes(col.key);
+                  return (
+                    <label key={col.key} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        disabled={checked && visibleColumnKeys.length === 1}
+                        onChange={() => toggleColumn(col.key)}
+                        className="h-4 w-4 accent-primary"
+                      />
+                      <span className="flex-1 text-foreground">{col.label}</span>
+                    </label>
+                  );
+                })}
+              </fieldset>
+            </div>
+          </details>
+          <details className="relative">
+            <summary className="qbs-focus inline-flex h-8 cursor-pointer list-none items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted marker:hidden">
+              <SlidersHorizontal size={14} />
+              الفلاتر
+            </summary>
+            <div className="qbs-panel absolute end-0 top-full z-50 mt-1.5 w-72 p-3">
+              <fieldset className="space-y-2">
+                <legend className="text-xs font-semibold text-muted-foreground">الحالة</legend>
+                <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted">
+                  <input
+                    type="radio"
+                    name="reusable-invoice-status-filter"
+                    checked={statusFilter1 === "all"}
+                    onChange={() => updateFilter1("status", "all")}
+                    className="h-4 w-4 accent-primary"
+                  />
+                  كل الحالات
+                </label>
+                {Object.entries(statusMap).map(([value, item]) => (
+                  <label key={value} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted">
+                    <input
+                      type="radio"
+                      name="reusable-invoice-status-filter"
+                      checked={statusFilter1 === value}
+                      onChange={() => updateFilter1("status", value)}
+                      className="h-4 w-4 accent-primary"
+                    />
+                    <span className="flex-1">{item.label}</span>
+                    <span className="amount text-xs text-muted-foreground">{statusCounts[value] ?? 0}</span>
+                  </label>
+                ))}
+              </fieldset>
+
+              <fieldset className="mt-3 space-y-2 border-t border-border pt-3">
+                <legend className="text-xs font-semibold text-muted-foreground">المنتج</legend>
+                {Object.entries(productCounts).map(([value, count]) => {
+                  const checked = productFilters1.includes(value);
+                  return (
+                    <label key={value} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(event) => {
+                          const next = event.target.checked
+                            ? [...productFilters1, value]
+                            : productFilters1.filter((item) => item !== value);
+                          updateFilter1("product", next);
+                        }}
+                        className="h-4 w-4 accent-primary"
+                      />
+                      <span className="flex-1">{value}</span>
+                      <span className="amount text-xs text-muted-foreground">{count}</span>
+                    </label>
+                  );
+                })}
+              </fieldset>
+
+              <div className="mt-3 border-t border-border pt-3">
+                <button
+                  type="button"
+                  className="qbs-focus h-8 rounded-md px-2.5 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground"
+                  onClick={clearFilters1}
+                >
+                  مسح الفلاتر
+                </button>
+              </div>
+            </div>
+          </details>
+          </div>
+        )}
+        selection={{
+          selectedIds: selected1,
+          onChange: setSelected1,
+          labels: {
+            selected: (count) => `${count} صف محدد`,
+            clear: "إلغاء التحديد",
+            selectAll: "تحديد كل الصفوف في الصفحة",
+            selectRow: (invoice) => `تحديد ${invoice.id}`,
+          },
+          bulkActions: (
+            <ContextMenuTrigger groups={selectedBulkGroups}>
+              <button className="qbs-focus inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-card px-3 text-xs font-semibold text-foreground transition-colors hover:bg-muted">
+                <MoreHorizontal size={14} />
+                إجراءات المحدد
+              </button>
+            </ContextMenuTrigger>
+          ),
+        }}
+        rowActions={(inv) => (
+          <ContextMenuTrigger groups={invoiceMenuGroups(inv)}>
+            <button
+              className="qbs-focus flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted"
+              aria-label={`إجراءات ${inv.id}`}
+            >
+              <MoreVertical size={16} />
+            </button>
+          </ContextMenuTrigger>
+        )}
+        footer={(
+          <Pagination
+            total={filtered1.length}
+            page={page1}
+            pageSize={pageSize1}
+            onPageChange={setPage1}
+            onPageSizeChange={(size) => {
+              setPageSize1(size);
+              setPage1(1);
+            }}
+            pageSizeOptions={[5, 10, 25, 50]}
+            variant="full"
+          />
+        )}
+      />
+
+      <section className="qbs-surface overflow-hidden">
+        <div className="border-b border-border px-5 py-3">
+          <p className="text-sm font-semibold text-foreground">استخدام DataTable</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            المطور يركب العنوان، الفلاتر، البحث، الزر الأساسي، الصفوف، والتذييل من props مستقلة.
+          </p>
+        </div>
+        <pre className="overflow-x-auto bg-muted/20 p-5 text-xs leading-relaxed text-foreground" dir="ltr">{`<DataTable
+  title="الفواتير"
+  subtitle="إدارة فواتير البيع"
+  rows={rows}
+  columns={columns}
+  getRowId={(row) => row.id}
+  primaryActions={[
+    { id: "create", label: "إضافة فاتورة", action: "create", onClick: openCreate },
+    { id: "export", label: "تصدير", action: "export", onClick: exportRows },
+  ]}
+  search={<InvoiceSearch value={query} onChange={setQuery} />}
+  filters={<TableFilterBar filters={filters} ... />}
+  toolbar={<ColumnsButton columns={columns} onChange={setColumns} />}
+  selection={{ selectedIds, onChange: setSelectedIds, bulkActions }}
+  rowActions={(row) => <RowActions row={row} />}
+  footer={<Pagination total={total} page={page} pageSize={pageSize} />}/>`}</pre>
+      </section>
+
       <div>
         <h1 className="text-foreground mb-1">الجداول</h1>
         <p className="text-muted-foreground">
@@ -692,42 +997,143 @@ export function TablesSection() {
           </p>
         </div>
 
-        {/* Toolbar */}
-        <div className="p-4 border-b border-border flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-48">
-            <Search
-              size={14}
-              className="absolute top-1/2 -translate-y-1/2 start-3 text-muted-foreground"
-            />
-            <input
-              className="w-full h-9 ps-9 pe-3 rounded-lg border border-border bg-muted text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder="بحث في الفواتير..."
-              value={search1}
-              onChange={(e) => {
-                setSearch1(e.target.value);
-                setPage1(1);
-              }}
-            />
-          </div>
-          {selected1.length > 0 && (
+        <TableFilterBar
+          filters={filters1.filter((filter) => filter.type === "search")}
+          totalCount={ALL_INVOICES.length}
+          filteredCount={filtered1.length}
+          onFilterChange={updateFilter1}
+          onClearFilters={clearFilters1}
+          labels={{
+            title: "",
+            results: (filteredCount, totalCount) => `عرض ${filteredCount} من ${totalCount} فاتورة`,
+          }}
+          actions={(
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">
-                {selected1.length} محدد
-              </span>
-              <button className="h-9 px-3 rounded-lg border border-destructive text-destructive text-sm hover:bg-destructive hover:text-white transition-colors">
-                حذف المحدد
+              <details className="relative">
+                <summary className="qbs-focus inline-flex h-8 cursor-pointer list-none items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted marker:hidden">
+                  <Columns3 size={14} />
+                  الأعمدة
+                </summary>
+                <div className="qbs-panel absolute end-0 top-full z-50 mt-1.5 w-56 p-2">
+                  <fieldset className="space-y-1">
+                    <legend className="px-2 py-1 text-xs font-semibold text-muted-foreground">إظهار الأعمدة</legend>
+                    {COLS.map((col) => {
+                      const checked = visibleColumnKeys.includes(col.key);
+                      return (
+                        <label key={col.key} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            disabled={checked && visibleColumnKeys.length === 1}
+                            onChange={() => toggleColumn(col.key)}
+                            className="h-4 w-4 accent-primary"
+                          />
+                          <span className="flex-1 text-foreground">{col.label}</span>
+                        </label>
+                      );
+                    })}
+                  </fieldset>
+                </div>
+              </details>
+
+              <details className="relative">
+                <summary className="qbs-focus inline-flex h-8 cursor-pointer list-none items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted marker:hidden">
+                  <SlidersHorizontal size={14} />
+                  الفلاتر
+                </summary>
+                <div className="qbs-panel absolute end-0 top-full z-50 mt-1.5 w-72 p-3">
+                  <fieldset className="space-y-2">
+                    <legend className="text-xs font-semibold text-muted-foreground">الحالة</legend>
+                    <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted">
+                      <input
+                        type="radio"
+                        name="invoice-status-filter"
+                        checked={statusFilter1 === "all"}
+                        onChange={() => updateFilter1("status", "all")}
+                        className="h-4 w-4 accent-primary"
+                      />
+                      كل الحالات
+                    </label>
+                    {Object.entries(statusMap).map(([value, item]) => (
+                      <label key={value} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted">
+                        <input
+                          type="radio"
+                          name="invoice-status-filter"
+                          checked={statusFilter1 === value}
+                          onChange={() => updateFilter1("status", value)}
+                          className="h-4 w-4 accent-primary"
+                        />
+                        <span className="flex-1">{item.label}</span>
+                        <span className="amount text-xs text-muted-foreground">{statusCounts[value] ?? 0}</span>
+                      </label>
+                    ))}
+                  </fieldset>
+
+                  <fieldset className="mt-3 space-y-2 border-t border-border pt-3">
+                    <legend className="text-xs font-semibold text-muted-foreground">المنتج</legend>
+                    {Object.entries(productCounts).map(([value, count]) => {
+                      const checked = productFilters1.includes(value);
+                      return (
+                        <label key={value} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={(event) => {
+                              const next = event.target.checked
+                                ? [...productFilters1, value]
+                                : productFilters1.filter((item) => item !== value);
+                              updateFilter1("product", next);
+                            }}
+                            className="h-4 w-4 accent-primary"
+                          />
+                          <span className="flex-1">{value}</span>
+                          <span className="amount text-xs text-muted-foreground">{count}</span>
+                        </label>
+                      );
+                    })}
+                  </fieldset>
+
+                  <div className="mt-3 border-t border-border pt-3">
+                    <button
+                      type="button"
+                      className="qbs-focus h-8 rounded-md px-2.5 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground"
+                      onClick={clearFilters1}
+                    >
+                      مسح الفلاتر
+                    </button>
+                  </div>
+                </div>
+              </details>
+
+              <button
+                type="button"
+                className="qbs-focus inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                <Download size={15} />
+                تصدير
               </button>
             </div>
           )}
-          <div className="flex items-center gap-2 ms-auto">
-            <button className="h-9 w-9 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors">
-              <Printer size={15} />
-            </button>
-            <button className="h-9 w-9 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors">
-              <Download size={15} />
-            </button>
+        />
+
+        {selected1.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-3 border-b border-border bg-primary/5 px-4 py-3">
+            <span className="text-sm font-semibold text-foreground">
+              {selected1.length} صف محدد
+            </span>
+            <span className="text-xs text-muted-foreground">
+              اختر إجراء مناسب للصفوف المحددة
+            </span>
+            <div className="ms-auto">
+              <ContextMenuTrigger groups={selectedBulkGroups}>
+                <button className="qbs-focus inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-card px-3 text-xs font-semibold text-foreground transition-colors hover:bg-muted">
+                  <MoreHorizontal size={14} />
+                  إجراءات المحدد
+                </button>
+              </ContextMenuTrigger>
+            </div>
           </div>
-        </div>
+        ) : null}
 
         {/* Table */}
         <div className="overflow-x-auto">
@@ -738,6 +1144,7 @@ export function TablesSection() {
               onSort={toggleSort1}
               selected={selected1}
               allIds={paged1.map((i) => i.id)}
+              columns={visibleColumns}
               onToggleAll={() =>
                 setSelected1(
                   selected1.length === paged1.length
@@ -749,6 +1156,7 @@ export function TablesSection() {
             <TableRows
               rows={paged1}
               selected={selected1}
+              columns={visibleColumns}
               onToggle={(id) =>
                 setSelected1((prev) =>
                   prev.includes(id)
@@ -812,15 +1220,17 @@ export function TablesSection() {
             <TableHead
               sortCol="date"
               sortDir="desc"
-              onSort={() => {}}
+              onSort={() => { }}
               selected={[]}
               allIds={paged2.map((i) => i.id)}
-              onToggleAll={() => {}}
+              columns={COLS}
+              onToggleAll={() => { }}
             />
             <TableRows
               rows={paged2}
               selected={[]}
-              onToggle={() => {}}
+              columns={COLS}
+              onToggle={() => { }}
             />
           </table>
         </div>
@@ -856,15 +1266,17 @@ export function TablesSection() {
             <TableHead
               sortCol="date"
               sortDir="desc"
-              onSort={() => {}}
+              onSort={() => { }}
               selected={[]}
               allIds={paged3.map((i) => i.id)}
-              onToggleAll={() => {}}
+              columns={COLS}
+              onToggleAll={() => { }}
             />
             <TableRows
               rows={paged3}
               selected={[]}
-              onToggle={() => {}}
+              columns={COLS}
+              onToggle={() => { }}
             />
           </table>
         </div>
@@ -914,21 +1326,21 @@ export function TablesSection() {
                       id: "view",
                       label: "عرض التفاصيل",
                       icon: Eye,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "edit",
                       label: "تعديل الفاتورة",
                       icon: Pencil,
                       shortcut: "E",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "copy",
                       label: "نسخ الرابط",
                       icon: Copy,
                       shortcut: "Ctrl+C",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -938,20 +1350,20 @@ export function TablesSection() {
                       id: "send",
                       label: "إرسال للعميل",
                       icon: Send,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "dup",
                       label: "تكرار",
                       icon: ExternalLink,
                       variant: "featured",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "archive",
                       label: "أرشفة",
                       icon: Archive,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -963,7 +1375,7 @@ export function TablesSection() {
                       icon: Trash2,
                       variant: "danger",
                       shortcut: "Del",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -999,19 +1411,19 @@ export function TablesSection() {
                       id: "view",
                       label: "ملف العميل",
                       icon: Eye,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "edit",
                       label: "تعديل البيانات",
                       icon: Pencil,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "invoices",
                       label: "فواتير العميل",
                       icon: ExternalLink,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1022,14 +1434,14 @@ export function TablesSection() {
                       label: "تعليق الحساب",
                       icon: Archive,
                       disabled: false,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "delete",
                       label: "حذف العميل",
                       icon: Trash2,
                       variant: "danger",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1066,20 +1478,20 @@ export function TablesSection() {
                       id: "view",
                       label: "عرض الصنف",
                       icon: Eye,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "edit",
                       label: "تعديل السعر",
                       icon: Pencil,
                       shortcut: "E",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "stock",
                       label: "حركة المخزون",
                       icon: ExternalLink,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1091,20 +1503,20 @@ export function TablesSection() {
                       label: "تصدير Excel",
                       icon: Download,
                       shortcut: "Ctrl+E",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "print",
                       label: "طباعة بطاقة الصنف",
                       icon: Printer,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "archive",
                       label: "أرشفة (متوقف)",
                       icon: Archive,
                       disabled: true,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1115,7 +1527,7 @@ export function TablesSection() {
                       label: "حذف الصنف",
                       icon: Trash2,
                       variant: "danger",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1152,7 +1564,7 @@ export function TablesSection() {
                       label: "عرض القيد",
                       icon: Eye,
                       shortcut: "V",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "approve",
@@ -1160,21 +1572,21 @@ export function TablesSection() {
                       icon: Send,
                       shortcut: "A",
                       variant: "featured",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "copy",
                       label: "نسخ القيد",
                       icon: Copy,
                       shortcut: "Ctrl+D",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "print",
                       label: "طباعة",
                       icon: Printer,
                       shortcut: "Ctrl+P",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1186,7 +1598,7 @@ export function TablesSection() {
                       icon: Trash2,
                       shortcut: "Del",
                       variant: "danger",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1221,17 +1633,17 @@ export function TablesSection() {
                     {
                       id: "open",
                       label: "فتح التقرير",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "share",
                       label: "مشاركة",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "rename",
                       label: "إعادة التسمية",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1241,7 +1653,7 @@ export function TablesSection() {
                       id: "delete",
                       label: "حذف التقرير",
                       variant: "danger",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1277,13 +1689,13 @@ export function TablesSection() {
                       id: "view",
                       label: "عرض الطلب",
                       icon: Eye,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "edit",
                       label: "تعديل",
                       icon: Pencil,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1295,19 +1707,19 @@ export function TablesSection() {
                       label: "اعتماد الطلب",
                       icon: Send,
                       variant: "featured",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "send_sup",
                       label: "إرسال للمورد",
                       icon: ExternalLink,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                     {
                       id: "receive",
                       label: "تسجيل الاستلام",
                       icon: Archive,
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1318,7 +1730,7 @@ export function TablesSection() {
                       label: "إلغاء الطلب",
                       icon: Archive,
                       variant: "danger",
-                      onClick: () => {},
+                      onClick: () => { },
                     },
                   ],
                 },
@@ -1355,7 +1767,7 @@ export function TablesSection() {
                   <span className="text-xs px-2 py-1 rounded-md bg-muted text-muted-foreground" style={{ fontWeight: 500 }}>default</span>
                 </td>
                 <td className="p-4">
-                  <EntityLink label="شركة النور للتجارة" onClick={() => {}} />
+                  <EntityLink label="شركة النور للتجارة" onClick={() => { }} />
                 </td>
                 <td className="p-4 text-xs text-muted-foreground">لون أساسي + خط سفلي عند التحويم</td>
                 <td className="p-4 text-xs text-muted-foreground">اسم عميل، اسم مورد، عنوان تقرير</td>
@@ -1365,7 +1777,7 @@ export function TablesSection() {
                   <span className="text-xs px-2 py-1 rounded-md bg-muted text-muted-foreground" style={{ fontWeight: 500 }}>id</span>
                 </td>
                 <td className="p-4">
-                  <EntityLink variant="id" label="INV-2024-0130" onClick={() => {}} />
+                  <EntityLink variant="id" label="INV-2024-0130" onClick={() => { }} />
                 </td>
                 <td className="p-4 text-xs text-muted-foreground">خط عرضي + أيقونة صغيرة عند التحويم</td>
                 <td className="p-4 text-xs text-muted-foreground">رقم فاتورة، رقم قيد، رقم طلب شراء</td>
@@ -1375,7 +1787,7 @@ export function TablesSection() {
                   <span className="text-xs px-2 py-1 rounded-md bg-muted text-muted-foreground" style={{ fontWeight: 500 }}>badge</span>
                 </td>
                 <td className="p-4">
-                  <EntityLink variant="badge" label="أرز غلا — كيلو" onClick={() => {}} />
+                  <EntityLink variant="badge" label="أرز غلا — كيلو" onClick={() => { }} />
                 </td>
                 <td className="p-4 text-xs text-muted-foreground">بادج خفيف يتحول للأساسي عند التحويم</td>
                 <td className="p-4 text-xs text-muted-foreground">اسم صنف، تصنيف، وحدة قياس</td>
