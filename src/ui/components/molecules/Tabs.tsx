@@ -12,8 +12,8 @@ import {
 } from "react";
 
 type TabsDirection = "rtl" | "ltr";
-type TabsListVariant = "top-navigation" | "pill-group" | "underline" | "surface";
-type TabsTriggerVariant = "top-navigation" | "pill";
+type TabsListVariant = "top-navigation" | "pill-group" | "underline" | "surface" | "segmented";
+type TabsTriggerVariant = "top-navigation" | "pill" | "segmented";
 
 interface TabsContextValue {
   value: string;
@@ -89,23 +89,26 @@ export function Tabs({
 export interface TabsListProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
   children: ReactNode;
   variant?: TabsListVariant;
+  fullWidth?: boolean;
 }
 
 export function TabsList({
   children,
   className,
   variant = "underline",
+  fullWidth = false,
   ...props
 }: TabsListProps) {
   const resolvedVariant =
     variant === "underline"
       ? "top-navigation"
-      : variant === "surface"
-      ? "pill-group"
+    : variant === "surface"
+      ? "segmented"
       : variant;
-  const base =
-    resolvedVariant === "pill-group"
-      ? "inline-flex items-center gap-2 flex-wrap"
+  const base = resolvedVariant === "pill-group"
+    ? "inline-flex items-center gap-2 flex-wrap"
+    : resolvedVariant === "segmented"
+      ? "inline-flex items-center gap-1 rounded-lg border border-border bg-muted p-1"
       : "inline-flex items-end gap-1 border-b border-border w-full";
 
   return (
@@ -113,7 +116,7 @@ export function TabsList({
       role="tablist"
       aria-orientation="horizontal"
       data-tabs-list-variant={resolvedVariant}
-      className={cx(base, className)}
+      className={cx(base, fullWidth && "w-full", className)}
       {...props}
     >
       {children}
@@ -212,6 +215,9 @@ export function TabsTrigger({
   const pillClasses = selected
     ? "h-9 px-3 rounded-lg border border-primary/35 bg-primary/10 text-primary shadow-sm"
     : "h-9 px-3 rounded-lg border border-border bg-card text-foreground/85 hover:bg-muted";
+  const segmentedClasses = selected
+    ? "h-8 px-3 rounded-md bg-card text-foreground shadow-sm"
+    : "h-8 px-3 rounded-md text-muted-foreground hover:text-foreground";
 
   return (
     <button
@@ -225,7 +231,11 @@ export function TabsTrigger({
       data-tabs-trigger-variant={resolvedVariant}
       className={cx(
         "qbs-focus inline-flex items-center gap-2 text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed",
-        resolvedVariant === "pill" ? pillClasses : topNavigationClasses,
+        resolvedVariant === "segmented"
+          ? segmentedClasses
+          : resolvedVariant === "pill"
+            ? pillClasses
+            : topNavigationClasses,
         className
       )}
       disabled={disabled}
