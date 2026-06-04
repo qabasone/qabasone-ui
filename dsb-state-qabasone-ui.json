@@ -1,0 +1,68 @@
+{
+  "runId": "qabasone-ui-ds-2026-06-04",
+  "figmaFileKey": "QvuyYFASh8AtS3SpqNXnuK",
+  "figmaFileUrl": "https://www.figma.com/design/QvuyYFASh8AtS3SpqNXnuK",
+  "phase": "phase3",
+  "step": "component-button-validated",
+  "entities": {
+    "collections": {
+      "colorPrimitives": "VariableCollectionId:5:2",
+      "color": "VariableCollectionId:5:3",
+      "sizing": "VariableCollectionId:5:4",
+      "typographyTokens": "VariableCollectionId:5:5"
+    },
+    "variables": {},
+    "pages": {
+      "Cover": "0:1",
+      "GettingStarted": "8:2",
+      "Foundations": "8:3",
+      "ComponentsSeparator": "8:4",
+      "Atoms": "8:5",
+      "Molecules": "8:6",
+      "Organisms": "8:7",
+      "ScreensSeparator": "8:8",
+      "Screens": "8:9"
+    },
+    "components": {
+      "Button": {
+        "doc": "17:2",
+        "sets": {
+          "primary": "17:42",
+          "secondary": "17:83",
+          "outline": "17:124",
+          "ghost": "17:165",
+          "danger": "17:206",
+          "success": "17:247",
+          "warning": "17:288",
+          "info": "17:329"
+        },
+        "variantCount": 96,
+        "status": "validated"
+      }
+    },
+    "styles": {
+      "textStyleCount": 13,
+      "effectStyleCount": 3
+    },
+    "frames": {
+      "coverRoot": "8:10",
+      "gettingStartedRoot": "12:2",
+      "foundationsRoot": "10:2"
+    }
+  },
+  "completedSteps": [
+    "phase0-discovery",
+    "figma-file-created",
+    "figma-file-inspected",
+    "library-search",
+    "phase1-foundations-created",
+    "phase1-foundations-validated",
+    "phase2-page-skeleton-created",
+    "phase2-foundations-docs-created",
+    "phase2-getting-started-created",
+    "phase2-file-structure-validated",
+    "phase3-button-created",
+    "phase3-button-validated"
+  ],
+  "pendingValidations": []
+}
