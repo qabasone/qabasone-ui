@@ -51,6 +51,7 @@ export function LoginSection() {
             allowBiometric={allowBiometric}
             branding={{
               appName: "قبس",
+              appIcon: <img src="/favicon.svg" alt="Qabasone Logo" />,
               panelTitle: "تسجيل الدخول إلى النظام",
               panelSubtitle: "استخدم الطريقة المناسبة لحسابك ثم أكمل التحقق الأمني",
             }}

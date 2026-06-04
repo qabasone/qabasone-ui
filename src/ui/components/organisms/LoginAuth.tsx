@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -37,6 +37,8 @@ interface LoginAuthBranding {
   appName: string;
   panelTitle: string;
   panelSubtitle: string;
+  // accept a React node (element, string, fragment) or a component type
+  appIcon?: React.ReactNode | React.ElementType | null;
 }
 
 export interface LoginAuthProps {
@@ -66,13 +68,13 @@ const METHOD_META: Record<
   },
   email: {
     label: "البريد الإلكتروني",
-    placeholder: "name@company.com",
+    placeholder: "ادخل الايميل",
     icon: Mail,
     type: "email",
   },
   egypt_mobile: {
-    label: "رقم الهاتف المصري",
-    placeholder: "01XXXXXXXXX",
+    label: "رقم الهاتف ",
+    placeholder: "01015888272",
     icon: Smartphone,
     type: "tel",
   },
@@ -91,6 +93,7 @@ export function LoginAuth({
     appName: "قبس",
     panelTitle: "تسجيل الدخول",
     panelSubtitle: "اختر طريقة الدخول المناسبة لحسابك",
+    appIcon: null,
   },
   onCredentialsSubmit,
   onTwoFactorSubmit,
@@ -177,6 +180,17 @@ export function LoginAuth({
 
   return (
     <div dir={dir} className="qbs-surface w-full max-w-md p-6 space-y-5">
+      {branding.appIcon ? (
+        <div className="mx-auto w-24 h-24 rounded-full bg-muted/10 flex items-center justify-center">
+          {React.isValidElement(branding.appIcon) ? (
+            branding.appIcon
+          ) : typeof branding.appIcon === "function" ? (
+            React.createElement(branding.appIcon as React.ElementType)
+          ) : (
+            branding.appIcon
+          )}
+        </div>
+      ) : null}
       <div className="space-y-1">
         <Text as="p" variant="caption" tone="muted">
           نظام {branding.appName}
@@ -214,6 +228,7 @@ export function LoginAuth({
               </Text>
               <div className="relative">
                 <input
+                  dir="rtl"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   type={meta.type}
